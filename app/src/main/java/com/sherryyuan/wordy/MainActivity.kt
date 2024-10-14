@@ -20,7 +20,7 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import com.sherryyuan.wordy.NotificationWorker.Companion.NOTIFICATION_ID
-import com.sherryyuan.wordy.NotificationWorker.Companion.NOTIFICATION_WORK
+import com.sherryyuan.wordy.NotificationWorker.Companion.NOTIFICATION_WORK_NAME
 import com.sherryyuan.wordy.ui.theme.WordyTheme
 
 class MainActivity : ComponentActivity() {
@@ -71,7 +71,7 @@ class MainActivity : ComponentActivity() {
 
         val instanceWorkManager = WorkManager.getInstance(baseContext)
         instanceWorkManager.beginUniqueWork(
-            NOTIFICATION_WORK,
+            NOTIFICATION_WORK_NAME,
             ExistingWorkPolicy.REPLACE,
             notificationWork,
         ).enqueue()
