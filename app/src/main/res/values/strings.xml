@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Wordy</string>
+    <string name="notification_channel_name">Word count</string>
+    <string name="notification_channel_description">Daily word count and current streak</string>
+</resources>
