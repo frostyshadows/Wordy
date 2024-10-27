@@ -22,7 +22,10 @@ import androidx.work.WorkManager
 import com.sherryyuan.wordy.NotificationWorker.Companion.NOTIFICATION_ID
 import com.sherryyuan.wordy.NotificationWorker.Companion.NOTIFICATION_WORK_NAME
 import com.sherryyuan.wordy.ui.theme.WordyTheme
+import com.sherryyuan.wordy.views.WelcomeScreen
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,8 +37,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             WordyTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
+                    WelcomeScreen(
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
@@ -75,21 +77,5 @@ class MainActivity : ComponentActivity() {
             ExistingWorkPolicy.REPLACE,
             notificationWork,
         ).enqueue()
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    WordyTheme {
-        Greeting("Android")
     }
 }
