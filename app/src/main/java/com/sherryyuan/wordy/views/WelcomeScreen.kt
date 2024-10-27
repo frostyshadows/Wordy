@@ -1,6 +1,5 @@
 package com.sherryyuan.wordy.views
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,11 +13,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.sherryyuan.wordy.R
+import com.sherryyuan.wordy.navigation.NavDestination
+import com.sherryyuan.wordy.navigation.previewNavController
 import com.sherryyuan.wordy.ui.theme.WordyTheme
 
 @Composable
-fun WelcomeScreen(modifier: Modifier = Modifier) {
+fun WelcomeScreen(
+    navController: NavHostController,
+    modifier: Modifier = Modifier,
+    ) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -44,7 +49,7 @@ fun WelcomeScreen(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.padding(vertical = 24.dp))
         Button(
             modifier = Modifier.fillMaxWidth(),
-            onClick = {}
+            onClick = { navController.navigate(NavDestination.CreateDailyWordCount) }
         ) {
             Text(stringResource(R.string.just_write_button))
         }
@@ -55,6 +60,6 @@ fun WelcomeScreen(modifier: Modifier = Modifier) {
 @Composable
 fun GreetingPreview() {
     WordyTheme {
-        WelcomeScreen()
+        WelcomeScreen(navController = previewNavController())
     }
 }

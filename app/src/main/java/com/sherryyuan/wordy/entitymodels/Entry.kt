@@ -1,4 +1,4 @@
-package com.sherryyuan.wordy.models
+package com.sherryyuan.wordy.entitymodels
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

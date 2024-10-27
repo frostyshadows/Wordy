@@ -5,8 +5,8 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.sherryyuan.wordy.models.Project
-import com.sherryyuan.wordy.models.ProjectStatus
+import com.sherryyuan.wordy.entitymodels.Project
+import com.sherryyuan.wordy.entitymodels.ProjectStatus
 import kotlinx.coroutines.flow.Flow
 
 @Dao

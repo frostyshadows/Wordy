@@ -28,4 +28,10 @@ object DatabaseModule {
     fun provideEntryDao(database: AppDatabase): EntryDao {
         return database.entryDao()
     }
+
+    @Singleton
+    @Provides
+    fun provideProjectDao(database: AppDatabase): ProjectDao {
+        return database.projectDao()
+    }
 }
