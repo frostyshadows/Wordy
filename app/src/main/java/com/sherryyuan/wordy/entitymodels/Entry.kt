@@ -1,14 +1,13 @@
-package com.sherryyuan.wordy.models
+package com.sherryyuan.wordy.entitymodels
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
 data class Entry(
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0,
     val timestamp: Long,
     val wordCount: Int,
-    val projectId: Int?,
-) {
-    @PrimaryKey(autoGenerate = true)
-    var id: Int = 0
-}
+    val projectId: Long,
+)

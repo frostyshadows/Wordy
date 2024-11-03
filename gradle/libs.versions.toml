@@ -1,6 +1,6 @@
 [versions]
 agp = "8.7.0-alpha01"
-kotlin = "2.0.20"
+kotlin = "2.0.21"
 ksp = "2.0.21-1.0.25"
 coreKtx = "1.13.1"
 junit = "4.13.2"
@@ -11,7 +11,11 @@ activityCompose = "1.9.2"
 composeBom = "2024.09.03"
 work = "2.9.1"
 room = "2.6.1"
-hilt = "2.51.1"
+hiltDagger = "2.51.1"
+hiltAndroidX = "1.2.0"
+navigationCompose = "2.8.3"
+serialization = "2.0.21"
+serializationJson = "1.7.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -32,13 +36,16 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
-dagger-hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
-dagger-hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
+androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltAndroidX" }
+dagger-hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hiltDagger" }
+dagger-hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hiltDagger" }
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serializationJson" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-dagger-hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+dagger-hilt = { id = "com.google.dagger.hilt.android", version.ref = "hiltDagger" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "serialization" }

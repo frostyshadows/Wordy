@@ -1,24 +1,30 @@
 package com.sherryyuan.wordy.database
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.sherryyuan.wordy.models.Project
-import com.sherryyuan.wordy.models.ProjectStatus
+import com.sherryyuan.wordy.entitymodels.DEFAULT_JUST_WRITE_PROJECT_TITLE
+import com.sherryyuan.wordy.entitymodels.Project
+import com.sherryyuan.wordy.entitymodels.ProjectStatus
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ProjectDao {
 
-    @Query(value = "SELECT * FROM Project")
+    @Query("SELECT * FROM Project")
     fun getAll(): Flow<List<Project>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertProject(project: Project)
+    @Query("SELECT EXISTS(SELECT * FROM Project WHERE title = :defaultTitle)")
+    suspend fun hasDefaultProject(defaultTitle: String = DEFAULT_JUST_WRITE_PROJECT_TITLE): Boolean
 
-    @Query(value = "UPDATE Project " +
+    /**
+     * @return ID of the inserted project
+     */
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertProject(project: Project): Long
+
+    @Query("UPDATE Project " +
             "SET title= :title, " +
             "description= :description, " +
             "targetTotalWordCount = :targetTotalWordCount, " +
@@ -28,7 +34,7 @@ interface ProjectDao {
             "status = :status " +
             "WHERE id = :projectId")
     suspend fun updateProject(
-        projectId: Int,
+        projectId: Long,
         title: String,
         description: String?,
         targetTotalWordCount: Int,
@@ -38,6 +44,6 @@ interface ProjectDao {
         status: ProjectStatus,
     )
 
-    @Delete
-    suspend fun deleteProject(project: Project)
+    @Query("DELETE FROM Project WHERE title = :defaultTitle")
+    suspend fun deleteDefaultProject(defaultTitle: String = DEFAULT_JUST_WRITE_PROJECT_TITLE)
 }

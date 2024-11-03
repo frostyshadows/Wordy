@@ -5,7 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.sherryyuan.wordy.models.Entry
+import com.sherryyuan.wordy.entitymodels.Entry
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -18,7 +18,7 @@ interface EntryDao {
     suspend fun insertEntry(entry: Entry)
 
     @Query(value = "UPDATE Entry SET timestamp= :timestamp, wordCount= :wordCount, projectId = :projectId WHERE id = :entryId")
-    suspend fun updateEntry(entryId: Int, timestamp: Long, wordCount: Int, projectId: Int)
+    suspend fun updateEntry(entryId: Long, timestamp: Long, wordCount: Int, projectId: Int)
 
     @Delete
     suspend fun deleteEntry(entry: Entry)
