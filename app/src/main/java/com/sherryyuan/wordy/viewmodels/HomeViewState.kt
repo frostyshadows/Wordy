@@ -9,6 +9,7 @@ sealed interface HomeViewState {
         val projectTitle: String,
         val selectProjectOptions: List<Project>,
         val projectDescription: String?,
+        val currentWordCountInput: String,
         val wordsToday: Int,
         val dailyWordCountGoal: Int,
     ) : HomeViewState

@@ -6,6 +6,7 @@
     <string name="welcome_message">Let\'s set a writing goal. Do you want to track a project, or track your daily word count without a project?</string>
     <string name="new_project_button">Create New Project</string>
     <string name="just_write_button">Just Write</string>
+    <string name="log_button_label">Log</string>
 
     <string name="want_to_write_header">I want to write…</string>
     <string name="words_per_day">words per day</string>
