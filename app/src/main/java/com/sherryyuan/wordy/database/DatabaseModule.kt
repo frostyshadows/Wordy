@@ -34,4 +34,10 @@ object DatabaseModule {
     fun provideProjectDao(database: AppDatabase): ProjectDao {
         return database.projectDao()
     }
+
+    @Singleton
+    @Provides
+    fun provideSelectedProjectDao(database: AppDatabase): SelectedProjectDao {
+        return database.selectedProjectDao()
+    }
 }

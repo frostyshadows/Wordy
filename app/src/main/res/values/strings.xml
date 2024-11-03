@@ -10,6 +10,9 @@
     <string name="want_to_write_header">I want to write…</string>
     <string name="words_per_day">words per day</string>
 
+    <string name="no_selected_project_title">No project selected</string>
+    <string name="just_writing_project_title">Just writing</string>
+
     <string name="notification_channel_name">Word count</string>
     <string name="notification_channel_description">Daily word count and current streak</string>
     <string name="notification_add_words_label">Add</string>

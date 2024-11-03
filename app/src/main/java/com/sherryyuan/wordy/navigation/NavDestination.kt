@@ -13,6 +13,7 @@ sealed interface NavDestination {
     @Serializable
     data object Home: NavDestination
 
+    // Default project for tracking a daily word count goal without a specific project.
     @Serializable
-    data object CreateDailyWordCount: NavDestination
+    data object CreateDefaultProject: NavDestination
 }
