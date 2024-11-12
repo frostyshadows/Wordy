@@ -1,4 +1,4 @@
-package com.sherryyuan.wordy.views
+package com.sherryyuan.wordy.home
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -6,13 +6,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -29,8 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sherryyuan.wordy.R
 import com.sherryyuan.wordy.ui.theme.WordyTheme
-import com.sherryyuan.wordy.viewmodels.HomeViewModel
-import com.sherryyuan.wordy.viewmodels.HomeViewState
 
 @Composable
 fun HomeScreen(
@@ -46,7 +41,7 @@ fun HomeScreen(
                     .fillMaxSize()
                     .padding(24.dp),
                 viewState = state,
-                onWordCountInputChange = { viewModel.onWordCountInputChange(it) },
+                onWordCountInputChange = { viewModel.setWordCount(it) },
                 onWordCountInputSubmit = { viewModel.onWordCountInputSubmit() }
             )
         }

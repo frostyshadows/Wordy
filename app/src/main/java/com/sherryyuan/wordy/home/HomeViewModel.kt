@@ -1,4 +1,4 @@
-package com.sherryyuan.wordy.viewmodels
+package com.sherryyuan.wordy.home
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
@@ -9,6 +9,7 @@ import com.sherryyuan.wordy.entitymodels.Entry
 import com.sherryyuan.wordy.entitymodels.Project
 import com.sherryyuan.wordy.repositories.EntryRepository
 import com.sherryyuan.wordy.repositories.ProjectRepository
+import com.sherryyuan.wordy.utils.DIGITS_REGEX
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,9 +38,9 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun onWordCountInputChange(input: String) {
-        if (input.matches(DIGITS_REGEX)) {
-            wordCountInput.value = input
+    fun setWordCount(wordCount: String) {
+        if (wordCount.matches(DIGITS_REGEX)) {
+            wordCountInput.value = wordCount
         }
     }
 
@@ -75,7 +76,7 @@ class HomeViewModel @Inject constructor(
             val wordsToday = entries
                 .filter { it.projectId == selectedProject?.id }
                 .sumOf { it.wordCount }
-            val dailyWordCountGoal = selectedProject?.dailyWordCountGoal ?: 0
+            val dailyWordCountGoal = selectedProject?.goal?.dailyWordCount ?: 0
             HomeViewState.Loaded(
                 projectTitle = projectTitle,
                 selectProjectOptions = projects,
@@ -85,9 +86,5 @@ class HomeViewModel @Inject constructor(
                 dailyWordCountGoal = dailyWordCountGoal,
             )
         }.stateIn(viewModelScope, SharingStarted.Eagerly, HomeViewState.Loading)
-    }
-
-    companion object {
-        private val DIGITS_REGEX = Regex("^\\d+\$")
     }
 }

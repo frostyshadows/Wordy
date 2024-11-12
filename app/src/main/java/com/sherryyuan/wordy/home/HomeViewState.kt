@@ -1,4 +1,4 @@
-package com.sherryyuan.wordy.viewmodels
+package com.sherryyuan.wordy.home
 
 import com.sherryyuan.wordy.entitymodels.Project
 

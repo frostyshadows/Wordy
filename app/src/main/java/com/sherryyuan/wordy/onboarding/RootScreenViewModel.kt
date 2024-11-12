@@ -1,4 +1,4 @@
-package com.sherryyuan.wordy.viewmodels
+package com.sherryyuan.wordy.onboarding
 
 import androidx.lifecycle.ViewModel
 import com.sherryyuan.wordy.navigation.NavDestination

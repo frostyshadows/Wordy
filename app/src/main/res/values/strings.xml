@@ -17,4 +17,11 @@
     <string name="notification_channel_name">Word count</string>
     <string name="notification_channel_description">Daily word count and current streak</string>
     <string name="notification_add_words_label">Add</string>
+
+    <string name="new_project_title">Title</string>
+    <string name="new_project_description">Description</string>
+    <string name="new_project_goal_type">Which type of goal do you want to set?</string>
+    <string name="new_project_daily_goal_description">Daily (eg. 500 words/day)</string>
+    <string name="new_project_deadline_goal_description">Total (eg. 50,000 words by November 30)</string>
+    <string name="next_label">Next</string>
 </resources>

@@ -1,7 +1,6 @@
-package com.sherryyuan.wordy.views
+package com.sherryyuan.wordy.onboarding
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -18,13 +17,14 @@ import androidx.navigation.NavHostController
 import com.sherryyuan.wordy.R
 import com.sherryyuan.wordy.navigation.NavDestination
 import com.sherryyuan.wordy.navigation.previewNavController
+import com.sherryyuan.wordy.ui.theme.SectionSpacer
 import com.sherryyuan.wordy.ui.theme.WordyTheme
 
 @Composable
 fun WelcomeScreen(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    ) {
+) {
     Scaffold { contentPadding ->
         Column(
             modifier = modifier
@@ -37,19 +37,19 @@ fun WelcomeScreen(
                 modifier = Modifier.fillMaxWidth(),
                 text = stringResource(R.string.welcome_title)
             )
-            Spacer(modifier = Modifier.padding(vertical = 12.dp))
+            SectionSpacer(heightDp = 12)
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 text = stringResource(R.string.welcome_message)
             )
-            Spacer(modifier = Modifier.padding(vertical = 24.dp))
+            SectionSpacer()
             Button(
                 modifier = Modifier.fillMaxWidth(),
-                onClick = {}
+                onClick = { navController.navigate(NavDestination.CreateNewProject) }
             ) {
                 Text(stringResource(R.string.new_project_button))
             }
-            Spacer(modifier = Modifier.padding(vertical = 24.dp))
+            SectionSpacer()
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = { navController.navigate(NavDestination.CreateDefaultProject) }
