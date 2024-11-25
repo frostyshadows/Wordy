@@ -1,4 +1,4 @@
-package com.sherryyuan.wordy.views
+package com.sherryyuan.wordy.defaultproject
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,8 +27,6 @@ import com.sherryyuan.wordy.R
 import com.sherryyuan.wordy.navigation.NavDestination
 import com.sherryyuan.wordy.navigation.previewNavController
 import com.sherryyuan.wordy.ui.theme.WordyTheme
-import com.sherryyuan.wordy.viewmodels.CreateDefaultProjectViewModel
-import com.sherryyuan.wordy.viewmodels.CreateDefaultProjectViewState
 
 @Composable
 fun CreateDefaultProjectScreen(
@@ -62,7 +60,7 @@ fun CreateDefaultProjectScreen(
                         .padding(end = 8.dp),
                     value = viewState.wordCount,
                     onValueChange = {
-                        viewModel.updateWordCount(it)
+                        viewModel.setWordCount(it)
                     },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                 )
@@ -71,7 +69,8 @@ fun CreateDefaultProjectScreen(
             Spacer(modifier = Modifier.weight(1f))
             Button(
                 modifier = Modifier.fillMaxWidth(),
-                enabled = viewState.state != CreateDefaultProjectViewState.State.SUBMITTING,
+                enabled = viewState.state != CreateDefaultProjectViewState.State.SUBMITTING &&
+                        viewState.wordCount.isNotBlank(),
                 onClick = { viewModel.saveDefaultProject() }
             ) {
                 Text(stringResource(R.string.confirm_label))

@@ -1,4 +1,4 @@
-package com.sherryyuan.wordy.viewmodels
+package com.sherryyuan.wordy.defaultproject
 
 data class CreateDefaultProjectViewState(
     val wordCount: String = "500",

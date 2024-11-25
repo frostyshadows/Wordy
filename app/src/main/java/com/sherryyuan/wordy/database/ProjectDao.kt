@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.sherryyuan.wordy.entitymodels.DEFAULT_JUST_WRITE_PROJECT_TITLE
+import com.sherryyuan.wordy.entitymodels.Goal
 import com.sherryyuan.wordy.entitymodels.Project
 import com.sherryyuan.wordy.entitymodels.ProjectStatus
 import kotlinx.coroutines.flow.Flow
@@ -27,20 +28,14 @@ interface ProjectDao {
     @Query("UPDATE Project " +
             "SET title= :title, " +
             "description= :description, " +
-            "targetTotalWordCount = :targetTotalWordCount, " +
-            "projectStartTime = :projectStartTime, " +
-            "targetProjectEndTime = :targetProjectEndTime, " +
-            "dailyWordCountGoal = :dailyWordCountGoal, " +
+            "goal = :goal, " +
             "status = :status " +
             "WHERE id = :projectId")
     suspend fun updateProject(
         projectId: Long,
         title: String,
         description: String?,
-        targetTotalWordCount: Int,
-        projectStartTime: Long,
-        targetProjectEndTime: Long?,
-        dailyWordCountGoal: Int,
+        goal: Goal,
         status: ProjectStatus,
     )
 

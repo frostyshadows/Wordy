@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "com.sherryyuan.wordy"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -60,6 +60,9 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.work.ktx)
     implementation(libs.dagger.hilt.android)
+    implementation(libs.moshi)
+    implementation(libs.moshi.adapters)
+    implementation(libs.moshi.kotlin)
     implementation(libs.kotlinx.serialization)
 
     debugImplementation(libs.androidx.ui.tooling)
