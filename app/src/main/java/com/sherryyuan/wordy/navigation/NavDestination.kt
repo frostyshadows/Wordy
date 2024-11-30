@@ -11,7 +11,13 @@ sealed interface NavDestination {
     data object Welcome: NavDestination
 
     @Serializable
+    data object Logs: NavDestination
+
+    @Serializable
     data object Home: NavDestination
+
+    @Serializable
+    data object Projects: NavDestination
 
     @Serializable
     data object CreateNewProject: NavDestination // TODO also use for editing existing project?

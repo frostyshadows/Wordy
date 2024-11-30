@@ -10,7 +10,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -32,19 +31,16 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel<HomeViewModel>()
 ) {
     val viewState by viewModel.state.collectAsState()
-    Scaffold { contentPadding ->
-        when (val state = viewState) {
-            is HomeViewState.Loading -> {}
-            is HomeViewState.Loaded -> LoadedHomeScreen(
-                modifier = Modifier
-                    .padding(contentPadding)
-                    .fillMaxSize()
-                    .padding(24.dp),
-                viewState = state,
-                onWordCountInputChange = { viewModel.setWordCount(it) },
-                onWordCountInputSubmit = { viewModel.onWordCountInputSubmit() }
-            )
-        }
+    when (val state = viewState) {
+        is HomeViewState.Loading -> {}
+        is HomeViewState.Loaded -> LoadedHomeScreen(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(24.dp),
+            viewState = state,
+            onWordCountInputChange = { viewModel.setWordCount(it) },
+            onWordCountInputSubmit = { viewModel.onWordCountInputSubmit() }
+        )
     }
 }
 

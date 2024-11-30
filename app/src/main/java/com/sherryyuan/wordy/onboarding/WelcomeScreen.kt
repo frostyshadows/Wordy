@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -25,10 +24,8 @@ fun WelcomeScreen(
     navController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
-    Scaffold { contentPadding ->
         Column(
             modifier = modifier
-                .padding(contentPadding)
                 .fillMaxSize()
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -57,7 +54,6 @@ fun WelcomeScreen(
                 Text(stringResource(R.string.just_write_button))
             }
         }
-    }
 }
 
 @Preview(showBackground = true)

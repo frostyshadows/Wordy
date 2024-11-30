@@ -13,7 +13,6 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.RadioButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -51,10 +50,8 @@ fun CreateNewProjectScreen(
         }
     }
 
-    Scaffold { contentPadding ->
         Column(
             modifier = Modifier
-                .padding(contentPadding)
                 .fillMaxSize()
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -85,7 +82,6 @@ fun CreateNewProjectScreen(
                 CreateNewProjectViewState.State.SUBMITTED -> Unit
             }
         }
-    }
 }
 
 @Composable

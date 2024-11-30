@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -41,40 +40,37 @@ fun CreateDefaultProjectScreen(
         }
     }
 
-    Scaffold { contentPadding ->
-        Column(
-            modifier = Modifier
-                .padding(contentPadding)
-                .fillMaxSize()
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Text(stringResource(R.string.want_to_write_header))
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(stringResource(R.string.want_to_write_header))
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                TextField(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(end = 8.dp),
-                    value = viewState.wordCount,
-                    onValueChange = {
-                        viewModel.setWordCount(it)
-                    },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-                )
-                Text(stringResource(R.string.words_per_day))
-            }
-            Spacer(modifier = Modifier.weight(1f))
-            Button(
-                modifier = Modifier.fillMaxWidth(),
-                enabled = viewState.state != CreateDefaultProjectViewState.State.SUBMITTING &&
-                        viewState.wordCount.isNotBlank(),
-                onClick = { viewModel.saveDefaultProject() }
-            ) {
-                Text(stringResource(R.string.confirm_label))
-            }
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            TextField(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 8.dp),
+                value = viewState.wordCount,
+                onValueChange = {
+                    viewModel.setWordCount(it)
+                },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+            )
+            Text(stringResource(R.string.words_per_day))
+        }
+        Spacer(modifier = Modifier.weight(1f))
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            enabled = viewState.state != CreateDefaultProjectViewState.State.SUBMITTING &&
+                    viewState.wordCount.isNotBlank(),
+            onClick = { viewModel.saveDefaultProject() }
+        ) {
+            Text(stringResource(R.string.confirm_label))
         }
     }
 }
