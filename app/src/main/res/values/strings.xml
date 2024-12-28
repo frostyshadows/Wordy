@@ -7,6 +7,9 @@
     <string name="new_project_button">Create New Project</string>
     <string name="just_write_button">Just Write</string>
     <string name="log_button_label">Log</string>
+    <string name="words_today_message">%1$d words today</string>
+    <string name="words_to_go_message">%1$d of %2$d words to go!</string>
+    <string name="goal_achieved">Daily goal achieved!</string>
 
     <string name="want_to_write_header">I want to write…</string>
     <string name="words_per_day">words per day</string>

@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sherryyuan.wordy.R
+import com.sherryyuan.wordy.ui.theme.SectionSpacer
 import com.sherryyuan.wordy.ui.theme.WordyTheme
 
 @Composable
@@ -56,25 +57,13 @@ private fun LoadedHomeScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(viewState.projectTitle)
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            TextField(
-                value = viewState.currentWordCountInput,
-                onValueChange = {
-                    onWordCountInputChange(it)
-                },
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(end = 8.dp),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-            )
-            Button(
-                onClick = { onWordCountInputSubmit() },
-                enabled = viewState.currentWordCountInput.isNotBlank(),
-                shape = RoundedCornerShape(8.dp)
-            ) {
-                Text(stringResource(R.string.log_button_label), color = Color.White)
-            }
-        }
+        SectionSpacer()
+
+        WordCountInput(viewState, onWordCountInputChange, onWordCountInputSubmit)
+        SectionSpacer(heightDp = 12)
+
+        Text(stringResource(R.string.words_today_message, viewState.wordsToday))
+        SectionSpacer(heightDp = 4)
 
         LinearProgressIndicator(
             progress = { viewState.wordsToday.toFloat() / viewState.dailyWordCountGoal },
@@ -83,8 +72,54 @@ private fun LoadedHomeScreen(
                 .height(8.dp),
             color = Color(0xFFC41E3A),
             trackColor = Color.LightGray,
+            drawStopIndicator = {},
         )
+        SectionSpacer(heightDp = 4)
+        val remainingWordCount = viewState.dailyWordCountGoal - viewState.wordsToday
+        if (remainingWordCount > 0) {
+            Text(
+                stringResource(
+                    R.string.words_to_go_message,
+                    remainingWordCount,
+                    viewState.dailyWordCountGoal
+                )
+            )
+        } else {
+            Text(stringResource(R.string.goal_achieved))
+        }
+
     }
+}
+
+@Composable
+private fun WordCountInput(
+    viewState: HomeViewState.Loaded,
+    onWordCountInputChange: (String) -> Unit,
+    onWordCountInputSubmit: () -> Unit,
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        TextField(
+            value = viewState.currentWordCountInput,
+            onValueChange = {
+                onWordCountInputChange(it)
+            },
+            modifier = Modifier
+                .weight(1f)
+                .padding(end = 8.dp),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+        )
+        Button(
+            onClick = { onWordCountInputSubmit() },
+            enabled = viewState.currentWordCountInput.isNotBlank(),
+            shape = RoundedCornerShape(8.dp)
+        ) {
+            Text(stringResource(R.string.log_button_label), color = Color.White)
+        }
+    }
+}
+
+private fun WordsTodayInfo() {
+
 }
 
 @Preview(showBackground = true)
