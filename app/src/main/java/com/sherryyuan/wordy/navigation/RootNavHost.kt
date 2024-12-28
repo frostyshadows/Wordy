@@ -25,27 +25,27 @@ fun RootNavHost(navController: NavHostController, modifier: Modifier = Modifier)
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = NavDestination.Root,
+        startDestination = WordyNavDestination.Root,
     ) {
-        composable<NavDestination.Root> {
+        composable<WordyNavDestination.Root> {
             RootScreen(navController)
         }
-        composableWithDefaultTransitions<NavDestination.Welcome> {
+        composableWithDefaultTransitions<WordyNavDestination.Welcome> {
             WelcomeScreen(navController)
         }
-        composable<NavDestination.Logs> {
+        composable<WordyNavDestination.Logs> {
             Text("logs")
         }
-        composableWithDefaultTransitions<NavDestination.Home> {
+        composableWithDefaultTransitions<WordyNavDestination.Home> {
             HomeScreen()
         }
-        composable<NavDestination.Projects> {
+        composable<WordyNavDestination.Projects> {
             Text("projects")
         }
-        composable<NavDestination.CreateNewProject> {
+        composable<WordyNavDestination.CreateNewProject> {
             CreateNewProjectScreen(navController)
         }
-        composable<NavDestination.CreateDefaultProject> {
+        composable<WordyNavDestination.CreateDefaultProject> {
             CreateDefaultProjectScreen(navController)
         }
     }

@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.sherryyuan.wordy.R
-import com.sherryyuan.wordy.navigation.NavDestination
+import com.sherryyuan.wordy.navigation.WordyNavDestination
 import com.sherryyuan.wordy.newproject.CreateNewProjectViewState.NewProjectGoal
 import com.sherryyuan.wordy.ui.theme.SectionSpacer
 
@@ -46,7 +46,7 @@ fun CreateNewProjectScreen(
 
     LaunchedEffect(viewState.state) {
         if (viewState.state == CreateNewProjectViewState.State.SUBMITTED) {
-            navController.navigate(NavDestination.Home) // TODO handle back navigation
+            navController.navigate(WordyNavDestination.Home) // TODO handle back navigation
         }
     }
 

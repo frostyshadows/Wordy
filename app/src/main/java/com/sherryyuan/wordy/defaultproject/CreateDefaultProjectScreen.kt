@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.sherryyuan.wordy.R
-import com.sherryyuan.wordy.navigation.NavDestination
+import com.sherryyuan.wordy.navigation.WordyNavDestination
 import com.sherryyuan.wordy.navigation.previewNavController
 import com.sherryyuan.wordy.ui.theme.WordyTheme
 
@@ -36,7 +36,7 @@ fun CreateDefaultProjectScreen(
 
     LaunchedEffect(viewState.state) {
         if (viewState.state == CreateDefaultProjectViewState.State.SUBMITTED) {
-            navController.navigate(NavDestination.Home) // TODO handle back navigation
+            navController.navigate(WordyNavDestination.Home) // TODO handle back navigation
         }
     }
 

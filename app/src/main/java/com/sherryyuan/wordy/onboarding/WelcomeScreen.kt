@@ -14,7 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.sherryyuan.wordy.R
-import com.sherryyuan.wordy.navigation.NavDestination
+import com.sherryyuan.wordy.navigation.WordyNavDestination
 import com.sherryyuan.wordy.navigation.previewNavController
 import com.sherryyuan.wordy.ui.theme.SectionSpacer
 import com.sherryyuan.wordy.ui.theme.WordyTheme
@@ -42,14 +42,14 @@ fun WelcomeScreen(
             SectionSpacer()
             Button(
                 modifier = Modifier.fillMaxWidth(),
-                onClick = { navController.navigate(NavDestination.CreateNewProject) }
+                onClick = { navController.navigate(WordyNavDestination.CreateNewProject) }
             ) {
                 Text(stringResource(R.string.new_project_button))
             }
             SectionSpacer()
             Button(
                 modifier = Modifier.fillMaxWidth(),
-                onClick = { navController.navigate(NavDestination.CreateDefaultProject) }
+                onClick = { navController.navigate(WordyNavDestination.CreateDefaultProject) }
             ) {
                 Text(stringResource(R.string.just_write_button))
             }
