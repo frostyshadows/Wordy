@@ -11,7 +11,7 @@ sealed interface WordyNavDestination {
     data object Welcome: WordyNavDestination
 
     @Serializable
-    data object Logs: WordyNavDestination
+    data object Entries: WordyNavDestination
 
     @Serializable
     data object Home: WordyNavDestination

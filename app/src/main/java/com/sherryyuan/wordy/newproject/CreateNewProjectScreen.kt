@@ -34,7 +34,7 @@ import androidx.navigation.NavHostController
 import com.sherryyuan.wordy.R
 import com.sherryyuan.wordy.navigation.WordyNavDestination
 import com.sherryyuan.wordy.newproject.CreateNewProjectViewState.NewProjectGoal
-import com.sherryyuan.wordy.ui.theme.SectionSpacer
+import com.sherryyuan.wordy.ui.theme.VerticalSpacer
 
 @Composable
 fun CreateNewProjectScreen(
@@ -107,7 +107,7 @@ private fun ColumnScope.ProjectInfoEditor(
             onTitleChange(it)
         },
     )
-    SectionSpacer()
+    VerticalSpacer()
 
     Text(stringResource(R.string.new_project_description))
     TextField(
@@ -117,10 +117,10 @@ private fun ColumnScope.ProjectInfoEditor(
             onDescriptionChange(it)
         },
     )
-    SectionSpacer()
+    VerticalSpacer()
 
     Text(stringResource(R.string.new_project_goal_type))
-    SectionSpacer(heightDp = 12)
+    VerticalSpacer(heightDp = 12)
     GoalOptionRadioButton(
         selected = viewState.goal is NewProjectGoal.WordCount,
         onSelect = { onGoalTypeSelected(NewProjectGoal.WordCount()) },
@@ -177,7 +177,7 @@ private fun ColumnScope.WordCountGoalEditor(
     onSubmitClick: () -> Unit,
 ) {
     Text(viewState.title)
-    SectionSpacer(
+    VerticalSpacer(
 
     )
     Text(stringResource(R.string.want_to_write_header))

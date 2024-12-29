@@ -14,6 +14,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.sherryyuan.wordy.defaultproject.CreateDefaultProjectScreen
+import com.sherryyuan.wordy.entries.EntriesScreen
 import com.sherryyuan.wordy.home.HomeScreen
 import com.sherryyuan.wordy.newproject.CreateNewProjectScreen
 import com.sherryyuan.wordy.onboarding.RootScreen
@@ -33,8 +34,8 @@ fun RootNavHost(navController: NavHostController, modifier: Modifier = Modifier)
         composableWithDefaultTransitions<WordyNavDestination.Welcome> {
             WelcomeScreen(navController)
         }
-        composable<WordyNavDestination.Logs> {
-            Text("logs")
+        composable<WordyNavDestination.Entries> {
+            EntriesScreen()
         }
         composableWithDefaultTransitions<WordyNavDestination.Home> {
             HomeScreen()

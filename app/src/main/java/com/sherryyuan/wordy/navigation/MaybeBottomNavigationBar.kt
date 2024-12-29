@@ -21,7 +21,7 @@ fun MaybeBottomNavigationBar(navController: NavHostController) {
     }
     val bottomScreens = remember {
         mapOf(
-            WordyNavDestination.Logs to R.drawable.list_icon,
+            WordyNavDestination.Entries to R.drawable.list_icon,
             WordyNavDestination.Home to R.drawable.pen_icon,
             WordyNavDestination.Projects to R.drawable.project_icon,
         )

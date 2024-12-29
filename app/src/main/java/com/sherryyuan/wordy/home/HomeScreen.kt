@@ -24,7 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sherryyuan.wordy.R
-import com.sherryyuan.wordy.ui.theme.SectionSpacer
+import com.sherryyuan.wordy.ui.theme.VerticalSpacer
 import com.sherryyuan.wordy.ui.theme.WordyTheme
 
 @Composable
@@ -57,13 +57,13 @@ private fun LoadedHomeScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(viewState.projectTitle)
-        SectionSpacer()
+        VerticalSpacer()
 
         WordCountInput(viewState, onWordCountInputChange, onWordCountInputSubmit)
-        SectionSpacer(heightDp = 12)
+        VerticalSpacer(heightDp = 12)
 
         Text(stringResource(R.string.words_today_message, viewState.wordsToday))
-        SectionSpacer(heightDp = 4)
+        VerticalSpacer(heightDp = 4)
 
         LinearProgressIndicator(
             progress = { viewState.wordsToday.toFloat() / viewState.dailyWordCountGoal },
@@ -74,14 +74,14 @@ private fun LoadedHomeScreen(
             trackColor = Color.LightGray,
             drawStopIndicator = {},
         )
-        SectionSpacer(heightDp = 4)
+        VerticalSpacer(heightDp = 4)
         val remainingWordCount = viewState.dailyWordCountGoal - viewState.wordsToday
         if (remainingWordCount > 0) {
             Text(
                 stringResource(
                     R.string.words_to_go_message,
                     remainingWordCount,
-                    viewState.dailyWordCountGoal
+                    viewState.dailyWordCountGoal,
                 )
             )
         } else {
@@ -116,10 +116,6 @@ private fun WordCountInput(
             Text(stringResource(R.string.log_button_label), color = Color.White)
         }
     }
-}
-
-private fun WordsTodayInfo() {
-
 }
 
 @Preview(showBackground = true)
