@@ -10,7 +10,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -25,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sherryyuan.wordy.R
+import com.sherryyuan.wordy.ui.theme.VerticalSpacer
 import com.sherryyuan.wordy.ui.theme.WordyTheme
 
 @Composable
@@ -32,19 +32,16 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel<HomeViewModel>()
 ) {
     val viewState by viewModel.state.collectAsState()
-    Scaffold { contentPadding ->
-        when (val state = viewState) {
-            is HomeViewState.Loading -> {}
-            is HomeViewState.Loaded -> LoadedHomeScreen(
-                modifier = Modifier
-                    .padding(contentPadding)
-                    .fillMaxSize()
-                    .padding(24.dp),
-                viewState = state,
-                onWordCountInputChange = { viewModel.setWordCount(it) },
-                onWordCountInputSubmit = { viewModel.onWordCountInputSubmit() }
-            )
-        }
+    when (val state = viewState) {
+        is HomeViewState.Loading -> {}
+        is HomeViewState.Loaded -> LoadedHomeScreen(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(24.dp),
+            viewState = state,
+            onWordCountInputChange = { viewModel.setWordCount(it) },
+            onWordCountInputSubmit = { viewModel.onWordCountInputSubmit() }
+        )
     }
 }
 
@@ -60,25 +57,13 @@ private fun LoadedHomeScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(viewState.projectTitle)
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            TextField(
-                value = viewState.currentWordCountInput,
-                onValueChange = {
-                    onWordCountInputChange(it)
-                },
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(end = 8.dp),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-            )
-            Button(
-                onClick = { onWordCountInputSubmit() },
-                enabled = viewState.currentWordCountInput.isNotBlank(),
-                shape = RoundedCornerShape(8.dp)
-            ) {
-                Text(stringResource(R.string.log_button_label), color = Color.White)
-            }
-        }
+        VerticalSpacer()
+
+        WordCountInput(viewState, onWordCountInputChange, onWordCountInputSubmit)
+        VerticalSpacer(heightDp = 12)
+
+        Text(stringResource(R.string.words_today_message, viewState.wordsToday))
+        VerticalSpacer(heightDp = 4)
 
         LinearProgressIndicator(
             progress = { viewState.wordsToday.toFloat() / viewState.dailyWordCountGoal },
@@ -87,7 +72,49 @@ private fun LoadedHomeScreen(
                 .height(8.dp),
             color = Color(0xFFC41E3A),
             trackColor = Color.LightGray,
+            drawStopIndicator = {},
         )
+        VerticalSpacer(heightDp = 4)
+        val remainingWordCount = viewState.dailyWordCountGoal - viewState.wordsToday
+        if (remainingWordCount > 0) {
+            Text(
+                stringResource(
+                    R.string.words_to_go_message,
+                    remainingWordCount,
+                    viewState.dailyWordCountGoal,
+                )
+            )
+        } else {
+            Text(stringResource(R.string.goal_achieved))
+        }
+
+    }
+}
+
+@Composable
+private fun WordCountInput(
+    viewState: HomeViewState.Loaded,
+    onWordCountInputChange: (String) -> Unit,
+    onWordCountInputSubmit: () -> Unit,
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        TextField(
+            value = viewState.currentWordCountInput,
+            onValueChange = {
+                onWordCountInputChange(it)
+            },
+            modifier = Modifier
+                .weight(1f)
+                .padding(end = 8.dp),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+        )
+        Button(
+            onClick = { onWordCountInputSubmit() },
+            enabled = viewState.currentWordCountInput.isNotBlank(),
+            shape = RoundedCornerShape(8.dp)
+        ) {
+            Text(stringResource(R.string.log_button_label), color = Color.White)
+        }
     }
 }
 

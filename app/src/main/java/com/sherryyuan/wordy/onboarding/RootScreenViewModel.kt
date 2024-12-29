@@ -1,7 +1,7 @@
 package com.sherryyuan.wordy.onboarding
 
 import androidx.lifecycle.ViewModel
-import com.sherryyuan.wordy.navigation.NavDestination
+import com.sherryyuan.wordy.navigation.WordyNavDestination
 import com.sherryyuan.wordy.repositories.ProjectRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -13,12 +13,12 @@ class RootScreenViewModel @Inject constructor(
     projectRepository: ProjectRepository
 ) : ViewModel() {
 
-    val landingScreen: Flow<NavDestination> = projectRepository.getProjects()
+    val landingScreen: Flow<WordyNavDestination> = projectRepository.getProjects()
         .map {
             if (it.isEmpty()) {
-                NavDestination.Welcome
+                WordyNavDestination.Welcome
             } else {
-                NavDestination.Home
+                WordyNavDestination.Home
             }
         }
 }

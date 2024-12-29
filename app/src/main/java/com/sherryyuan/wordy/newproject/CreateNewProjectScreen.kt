@@ -13,7 +13,6 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.RadioButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -33,9 +32,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.sherryyuan.wordy.R
-import com.sherryyuan.wordy.navigation.NavDestination
+import com.sherryyuan.wordy.navigation.WordyNavDestination
 import com.sherryyuan.wordy.newproject.CreateNewProjectViewState.NewProjectGoal
-import com.sherryyuan.wordy.ui.theme.SectionSpacer
+import com.sherryyuan.wordy.ui.theme.VerticalSpacer
 
 @Composable
 fun CreateNewProjectScreen(
@@ -47,14 +46,12 @@ fun CreateNewProjectScreen(
 
     LaunchedEffect(viewState.state) {
         if (viewState.state == CreateNewProjectViewState.State.SUBMITTED) {
-            navController.navigate(NavDestination.Home) // TODO handle back navigation
+            navController.navigate(WordyNavDestination.Home) // TODO handle back navigation
         }
     }
 
-    Scaffold { contentPadding ->
         Column(
             modifier = Modifier
-                .padding(contentPadding)
                 .fillMaxSize()
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -85,7 +82,6 @@ fun CreateNewProjectScreen(
                 CreateNewProjectViewState.State.SUBMITTED -> Unit
             }
         }
-    }
 }
 
 @Composable
@@ -111,7 +107,7 @@ private fun ColumnScope.ProjectInfoEditor(
             onTitleChange(it)
         },
     )
-    SectionSpacer()
+    VerticalSpacer()
 
     Text(stringResource(R.string.new_project_description))
     TextField(
@@ -121,10 +117,10 @@ private fun ColumnScope.ProjectInfoEditor(
             onDescriptionChange(it)
         },
     )
-    SectionSpacer()
+    VerticalSpacer()
 
     Text(stringResource(R.string.new_project_goal_type))
-    SectionSpacer(heightDp = 12)
+    VerticalSpacer(heightDp = 12)
     GoalOptionRadioButton(
         selected = viewState.goal is NewProjectGoal.WordCount,
         onSelect = { onGoalTypeSelected(NewProjectGoal.WordCount()) },
@@ -181,7 +177,7 @@ private fun ColumnScope.WordCountGoalEditor(
     onSubmitClick: () -> Unit,
 ) {
     Text(viewState.title)
-    SectionSpacer(
+    VerticalSpacer(
 
     )
     Text(stringResource(R.string.want_to_write_header))

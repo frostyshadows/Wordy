@@ -6,13 +6,9 @@
     <string name="welcome_message">Let\'s set a writing goal. Do you want to track a project, or track your daily word count without a project?</string>
     <string name="new_project_button">Create New Project</string>
     <string name="just_write_button">Just Write</string>
-    <string name="log_button_label">Log</string>
 
     <string name="want_to_write_header">I want to write…</string>
     <string name="words_per_day">words per day</string>
-
-    <string name="no_selected_project_title">No project selected</string>
-    <string name="just_writing_project_title">Just writing</string>
 
     <string name="notification_channel_name">Word count</string>
     <string name="notification_channel_description">Daily word count and current streak</string>
@@ -24,4 +20,16 @@
     <string name="new_project_daily_goal_description">Daily (eg. 500 words/day)</string>
     <string name="new_project_deadline_goal_description">Total (eg. 50,000 words by November 30)</string>
     <string name="next_label">Next</string>
+
+    <string name="log_button_label">Log</string>
+    <string name="words_message">%1$d words</string>
+    <string name="words_today_message">%1$d words today</string>
+    <string name="words_to_go_message">%1$d of %2$d words to go!</string>
+    <string name="goal_achieved">Daily goal achieved!</string>
+
+    <string name="no_selected_project_title">No project selected</string>
+    <string name="just_writing_project_title">Just writing</string>
+
+    <string name="entries_list_label">List</string>
+    <string name="entries_calendar_label">Calendar</string>
 </resources>
