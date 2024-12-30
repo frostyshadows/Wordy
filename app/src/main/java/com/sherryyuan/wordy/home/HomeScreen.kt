@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -70,8 +71,6 @@ private fun LoadedHomeScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(8.dp),
-            color = Color(0xFFC41E3A),
-            trackColor = Color.LightGray,
             drawStopIndicator = {},
         )
         VerticalSpacer(heightDp = 4)
@@ -113,7 +112,7 @@ private fun WordCountInput(
             enabled = viewState.currentWordCountInput.isNotBlank(),
             shape = RoundedCornerShape(8.dp)
         ) {
-            Text(stringResource(R.string.log_button_label), color = Color.White)
+            Text(stringResource(R.string.log_button_label))
         }
     }
 }

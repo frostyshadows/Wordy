@@ -60,10 +60,11 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.work.ktx)
     implementation(libs.dagger.hilt.android)
+    implementation(libs.kizitonwose.calender.compose)
+    implementation(libs.kotlinx.serialization)
     implementation(libs.moshi)
     implementation(libs.moshi.adapters)
     implementation(libs.moshi.kotlin)
-    implementation(libs.kotlinx.serialization)
 
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)

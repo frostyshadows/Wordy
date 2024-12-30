@@ -20,6 +20,7 @@
     <string name="new_project_daily_goal_description">Daily (eg. 500 words/day)</string>
     <string name="new_project_deadline_goal_description">Total (eg. 50,000 words by November 30)</string>
     <string name="next_label">Next</string>
+    <string name="previous_label">Previous</string>
 
     <string name="log_button_label">Log</string>
     <string name="words_message">%1$d words</string>
@@ -32,4 +33,5 @@
 
     <string name="entries_list_label">List</string>
     <string name="entries_calendar_label">Calendar</string>
+    <string name="show_selected_project">Only show selected project</string>
 </resources>
