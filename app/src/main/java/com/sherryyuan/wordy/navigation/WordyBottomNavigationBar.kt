@@ -4,21 +4,18 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
 import com.sherryyuan.wordy.R
 import com.sherryyuan.wordy.utils.isOnDestination
 
 @Composable
-fun MaybeBottomNavigationBar(navController: NavHostController) {
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    if (navBackStackEntry?.shouldShowNavigationBar() != true) {
-        return
-    }
+fun WordyBottomNavigationBar(
+    navController: NavHostController,
+    navBackStack: NavBackStackEntry?,
+) {
     val bottomScreens = remember {
         mapOf(
             WordyNavDestination.Entries to R.drawable.list_icon,
@@ -36,7 +33,7 @@ fun MaybeBottomNavigationBar(navController: NavHostController) {
                         contentDescription = null,
                     )
                 },
-                selected = navBackStackEntry?.destination?.isOnDestination(screen) == true,
+                selected = navBackStack?.destination?.isOnDestination(screen) == true,
                 onClick = {
                     navController.navigate(screen) {
                         popUpTo(navController.graph.startDestinationId) {
@@ -50,9 +47,3 @@ fun MaybeBottomNavigationBar(navController: NavHostController) {
         }
     }
 }
-
-private fun NavBackStackEntry.shouldShowNavigationBar() =
-    !destination.isOnDestination(WordyNavDestination.Root) &&
-            !destination.isOnDestination(WordyNavDestination.Welcome) &&
-            !destination.isOnDestination(WordyNavDestination.CreateNewProject) &&
-            !destination.isOnDestination(WordyNavDestination.CreateDefaultProject)
