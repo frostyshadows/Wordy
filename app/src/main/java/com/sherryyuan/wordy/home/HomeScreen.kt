@@ -124,7 +124,6 @@ private fun LoadedHomePreview() {
         LoadedHomeScreen(
             viewState = HomeViewState.Loaded(
                 projectTitle = "Viridian",
-                selectProjectOptions = emptyList(),
                 projectDescription = null,
                 currentWordCountInput = "100",
                 wordsToday = 200,

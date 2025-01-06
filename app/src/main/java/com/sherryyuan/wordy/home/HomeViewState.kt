@@ -7,7 +7,6 @@ sealed interface HomeViewState {
 
     data class Loaded(
         val projectTitle: String,
-        val selectProjectOptions: List<Project>,
         val projectDescription: String?,
         val currentWordCountInput: String,
         val wordsToday: Int,

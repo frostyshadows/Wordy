@@ -61,22 +61,30 @@ class EntriesViewModel @Inject constructor(
             projectRepository.getSelectedProject(),
         ) { mode, showCurrentProjectOnly, entries, projects, selectedProject ->
             when (mode) {
-                EntriesViewMode.LIST -> entries.toListEntries(
-                    projects,
-                    selectedProject,
-                    showCurrentProjectOnly,
-                )
+                EntriesViewMode.LIST -> {
+                    val displayedEntries = if (showCurrentProjectOnly) {
+                        entries.filter { selectedProject?.id == it.projectId }
+                    } else {
+                        entries
+                    }
+                    displayedEntries.toListEntries(
+                        projects,
+                        showCurrentProjectOnly,
+                    )
+                }
 
-                EntriesViewMode.CALENDAR -> entries.toCalendarEntries(
-                    projects,
-                    selectedProject,
-                )
+                EntriesViewMode.CALENDAR -> entries
+                    .filter { selectedProject?.id == it.projectId }
+                    .toCalendarEntries(
+                        projects,
+                        selectedProject,
+                    )
             }
         }.stateIn(
             viewModelScope,
             SharingStarted.Eagerly,
             ListEntries(
-                showCurrentProjectOnly = false,
+                showCurrentProjectOnly = showCurrentProjectOnly.value,
                 monthlyEntries = emptyList(),
                 startYearMonth = YearMonth.now(),
             ),
@@ -85,7 +93,6 @@ class EntriesViewModel @Inject constructor(
 
     private fun List<Entry>.toListEntries(
         projects: List<Project>,
-        selectedProject: Project?,
         showCurrentProjectOnly: Boolean,
     ): ListEntries {
         val groupedByMonth = groupBy { entry ->
@@ -100,15 +107,7 @@ class EntriesViewModel @Inject constructor(
             }
 
             val dailyEntries = groupedByDay.map { (day, dayEntries) ->
-                val sortedDayEntries = dayEntries
-                    .filter {
-                        if (showCurrentProjectOnly) {
-                            selectedProject?.id == it.projectId
-                        } else {
-                            true
-                        }
-                    }
-                    .sortedBy { it.timestamp }
+                val sortedDayEntries = dayEntries.sortedBy { it.timestamp }
                 ListEntries.DailyListEntries(
                     dateText = day,
                     entries = sortedDayEntries.map { entry ->
