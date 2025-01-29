@@ -51,6 +51,7 @@ class HomeViewModel @Inject constructor(
                     )
                 )
             }
+            wordCountInput.value = ""
         }
     }
 

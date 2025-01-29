@@ -8,6 +8,7 @@ sealed class EntriesViewState(
 ) {
 
     data class ListEntries(
+        val isShowCurrentOnlyToggleVisible: Boolean,
         val showCurrentProjectOnly: Boolean,
         val monthlyEntries: List<MonthlyListEntries>,
         override val startYearMonth: YearMonth,

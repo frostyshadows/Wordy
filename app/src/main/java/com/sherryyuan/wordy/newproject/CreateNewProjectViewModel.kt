@@ -27,7 +27,8 @@ class CreateNewProjectViewModel @Inject constructor(
 
     private val titleInput = MutableStateFlow("")
     private val descriptionInput = MutableStateFlow("")
-    private val goal: MutableStateFlow<NewProjectGoal> = MutableStateFlow(NewProjectGoal.WordCount())
+    private val goal: MutableStateFlow<NewProjectGoal> =
+        MutableStateFlow(NewProjectGoal.WordCount())
     private val currentState: MutableStateFlow<State> = MutableStateFlow(State.EDITING_INFO)
 
     val state: StateFlow<CreateNewProjectViewState> = createNewProjectState()
@@ -70,28 +71,33 @@ class CreateNewProjectViewModel @Inject constructor(
 
     fun saveProject() {
         when (val goal = goal.value) {
-            is NewProjectGoal.WordCount -> saveWordCountProject(goal)
+            is NewProjectGoal.WordCount -> viewModelScope.launch {
+                val projectId = saveWordCountProject(goal)
+                projectRepository.updateSelectedProject(projectId)
+            }
+
             is NewProjectGoal.Deadline -> TODO()
-            else -> error("Project cannot be saved")
         }
     }
 
-    private fun saveWordCountProject(goal: NewProjectGoal.WordCount) {
+    /**
+     * @return id of new project
+     */
+    private suspend fun saveWordCountProject(goal: NewProjectGoal.WordCount): Long {
         val newProject = Project(
             title = titleInput.value,
             description = descriptionInput.value,
             goal = Goal.DailyWordCountGoal(goal.wordCount.toInt()),
             status = ProjectStatus.IN_PROGRESS,
         )
-        viewModelScope.launch {
-            currentState.value = State.SUBMITTING_WORD_COUNT_GOAL
-            // TODO handle duplicate titles
-            val newProjectId = projectRepository.insertProject(newProject)
-            if (projectRepository.getSelectedProject().first() == null) {
-                projectRepository.updateSelectedProject(newProjectId)
-            }
-            currentState.value = State.SUBMITTED
+        currentState.value = State.SUBMITTING_WORD_COUNT_GOAL
+        // TODO handle duplicate titles
+        val newProjectId = projectRepository.insertProject(newProject)
+        if (projectRepository.getSelectedProject().first() == null) {
+            projectRepository.updateSelectedProject(newProjectId)
         }
+        currentState.value = State.SUBMITTED
+        return newProjectId
     }
 
     private fun createNewProjectState(): StateFlow<CreateNewProjectViewState> {
