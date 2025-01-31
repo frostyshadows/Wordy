@@ -1,5 +1,10 @@
 package com.sherryyuan.wordy.home
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.with
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,15 +15,19 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,14 +44,20 @@ fun HomeScreen(
     val viewState by viewModel.state.collectAsState()
     when (val state = viewState) {
         is HomeViewState.Loading -> {}
-        is HomeViewState.Loaded -> LoadedHomeScreen(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp),
-            viewState = state,
-            onWordCountInputChange = { viewModel.setWordCount(it) },
-            onWordCountInputSubmit = { viewModel.onWordCountInputSubmit() }
-        )
+        is HomeViewState.Loaded -> {
+            val keyboardController = LocalSoftwareKeyboardController.current
+            LoadedHomeScreen(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(24.dp),
+                viewState = state,
+                onWordCountInputChange = { viewModel.setWordCount(it) },
+                onWordCountInputSubmit = {
+                    viewModel.onWordCountInputSubmit()
+                    keyboardController?.hide()
+                }
+            )
+        }
     }
 }
 
@@ -63,7 +78,10 @@ private fun LoadedHomeScreen(
         WordCountInput(viewState, onWordCountInputChange, onWordCountInputSubmit)
         VerticalSpacer(heightDp = 12)
 
-        Text(stringResource(R.string.words_today_message, viewState.wordsToday))
+        Row {
+            AnimatedCounter(viewState.wordsToday)
+            Text(stringResource(R.string.words_today_message))
+        }
         VerticalSpacer(heightDp = 4)
 
         LinearProgressIndicator(
@@ -113,6 +131,38 @@ private fun WordCountInput(
             shape = RoundedCornerShape(8.dp)
         ) {
             Text(stringResource(R.string.log_button_label))
+        }
+    }
+}
+
+// from https://github.com/philipplackner/AnimatedCounterCompose
+@OptIn(ExperimentalAnimationApi::class)
+@Composable
+fun AnimatedCounter(count: Int) {
+    var oldCount by remember { mutableIntStateOf(count) }
+    SideEffect {
+        oldCount = count
+    }
+    Row {
+        val countString = count.toString()
+        val oldCountString = oldCount.toString()
+        for(i in countString.indices) {
+            val oldChar = oldCountString.getOrNull(i)
+            val newChar = countString[i]
+            val char = if(oldChar == newChar) {
+                oldCountString[i]
+            } else {
+                countString[i]
+            }
+            AnimatedContent(
+                targetState = char,
+                transitionSpec = {
+                    slideInVertically { it } with slideOutVertically { -it }
+                },
+                label = "animated counter"
+            ) { targetChar ->
+                Text(text = targetChar.toString(), softWrap = false)
+            }
         }
     }
 }

@@ -1,5 +1,7 @@
 package com.sherryyuan.wordy.navigation
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -24,26 +26,29 @@ fun WordyBottomNavigationBar(
         )
     }
 
-    NavigationBar {
-        bottomScreens.forEach { (screen, icon) ->
-            NavigationBarItem(
-                icon = {
-                    Icon(
-                        painter = painterResource(icon),
-                        contentDescription = null,
-                    )
-                },
-                selected = navBackStack?.destination?.isOnDestination(screen) == true,
-                onClick = {
-                    navController.navigate(screen) {
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState = true
+    Column {
+        HorizontalDivider()
+        NavigationBar {
+            bottomScreens.forEach { (screen, icon) ->
+                NavigationBarItem(
+                    icon = {
+                        Icon(
+                            painter = painterResource(icon),
+                            contentDescription = null,
+                        )
+                    },
+                    selected = navBackStack?.destination?.isOnDestination(screen) == true,
+                    onClick = {
+                        navController.navigate(screen) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
                         }
-                        launchSingleTop = true
-                        restoreState = true
                     }
-                }
-            )
+                )
+            }
         }
     }
 }

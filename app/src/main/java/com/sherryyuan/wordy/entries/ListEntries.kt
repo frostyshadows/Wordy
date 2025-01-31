@@ -37,12 +37,14 @@ fun ListEntries(
         entriesState.monthlyEntries.map { false }.toMutableStateList()
     }
 
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Checkbox(
-            checked = entriesState.showCurrentProjectOnly,
-            onCheckedChange = { onShowCurrentProjectClick() }
-        )
-        Text(stringResource(R.string.show_selected_project))
+    if (entriesState.isShowCurrentOnlyToggleVisible) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Checkbox(
+                checked = entriesState.showCurrentProjectOnly,
+                onCheckedChange = { onShowCurrentProjectClick() }
+            )
+            Text(stringResource(R.string.show_selected_project))
+        }
     }
     LazyColumn {
         entriesState.monthlyEntries.forEachIndexed { i, entries ->
@@ -112,6 +114,7 @@ private fun ListEntriesPreview() {
     WordyTheme {
         ListEntries(
             EntriesViewState.ListEntries(
+                isShowCurrentOnlyToggleVisible = true,
                 showCurrentProjectOnly = true,
                 monthlyEntries = listOf(
                     EntriesViewState.ListEntries.MonthlyListEntries(

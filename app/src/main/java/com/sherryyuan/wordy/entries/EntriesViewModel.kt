@@ -62,13 +62,9 @@ class EntriesViewModel @Inject constructor(
         ) { mode, showCurrentProjectOnly, entries, projects, selectedProject ->
             when (mode) {
                 EntriesViewMode.LIST -> {
-                    val displayedEntries = if (showCurrentProjectOnly) {
-                        entries.filter { selectedProject?.id == it.projectId }
-                    } else {
-                        entries
-                    }
-                    displayedEntries.toListEntries(
+                    entries.toListEntries(
                         projects,
+                        selectedProject,
                         showCurrentProjectOnly,
                     )
                 }
@@ -84,6 +80,7 @@ class EntriesViewModel @Inject constructor(
             viewModelScope,
             SharingStarted.Eagerly,
             ListEntries(
+                isShowCurrentOnlyToggleVisible = false,
                 showCurrentProjectOnly = showCurrentProjectOnly.value,
                 monthlyEntries = emptyList(),
                 startYearMonth = YearMonth.now(),
@@ -93,9 +90,14 @@ class EntriesViewModel @Inject constructor(
 
     private fun List<Entry>.toListEntries(
         projects: List<Project>,
+        selectedProject: Project?,
         showCurrentProjectOnly: Boolean,
     ): ListEntries {
-        val groupedByMonth = groupBy { entry ->
+        val groupedByMonth = if (showCurrentProjectOnly) {
+            filter { selectedProject?.id == it.projectId }
+        } else {
+            this
+        }.groupBy { entry ->
             val calendar = Calendar.getInstance().apply { timeInMillis = entry.timestamp }
             monthFormatter.format(calendar.time)
         }
@@ -130,6 +132,7 @@ class EntriesViewModel @Inject constructor(
             monthFormatter.parse(monthly.monthHeaderText).time
         }
         return ListEntries(
+            isShowCurrentOnlyToggleVisible = isNotEmpty() && projects.size > 1,
             showCurrentProjectOnly = showCurrentProjectOnly,
             monthlyEntries = monthlyEntries,
             startYearMonth = earliestYearMonth(),
@@ -190,7 +193,7 @@ class EntriesViewModel @Inject constructor(
     }
 
     private fun List<Entry>.earliestYearMonth(): YearMonth {
-        val earliestTimestamp = minOf { it.timestamp }
+        val earliestTimestamp = minOfOrNull { it.timestamp } ?: System.currentTimeMillis()
         val earliestLocalDate =
             Instant.ofEpochMilli(earliestTimestamp).atZone(ZoneId.systemDefault()).toLocalDate()
         return earliestLocalDate.yearMonth
