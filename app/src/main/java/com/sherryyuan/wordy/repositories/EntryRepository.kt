@@ -13,6 +13,7 @@ import javax.inject.Inject
 
 class EntryRepository @Inject constructor(private val entryDao: EntryDao) {
 
+    // TODO: simplify model to one entry per day
     suspend fun insertEntry(entry: Entry) {
         entryDao.insertEntry(entry)
     }
