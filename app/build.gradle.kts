@@ -45,10 +45,12 @@ android {
 dependencies {
     ksp(libs.androidx.room.compiler)
     ksp(libs.dagger.hilt.compiler)
+    ksp(libs.androidx.hilt.compiler)
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.hilt.work)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.material3)

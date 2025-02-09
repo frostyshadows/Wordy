@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
 
-
 class ProjectRepository @Inject constructor(
     private val projectDao: ProjectDao,
     private val selectedProjectDao: SelectedProjectDao,
