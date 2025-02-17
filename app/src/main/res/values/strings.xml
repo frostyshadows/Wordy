@@ -14,6 +14,7 @@
     <string name="notification_channel_name">Word count</string>
     <string name="notification_channel_description">Daily word count and current streak</string>
     <string name="notification_add_words_label">Add words</string>
+    <string name="notification_update_words_label">Update words</string>
 
     <string name="new_project_title">Title</string>
     <string name="new_project_description">Description</string>
