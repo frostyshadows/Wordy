@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sherryyuan.wordy.R
 import com.sherryyuan.wordy.entitymodels.DEFAULT_JUST_WRITE_PROJECT_TITLE
-import com.sherryyuan.wordy.entitymodels.Entry
 import com.sherryyuan.wordy.repositories.EntryRepository
 import com.sherryyuan.wordy.repositories.ProjectRepository
 import com.sherryyuan.wordy.utils.DIGITS_REGEX
@@ -44,11 +43,10 @@ class HomeViewModel @Inject constructor(
                 .first()
             if (selectedProject != null) {
                 entryRepository.insertEntry(
-                    Entry(
-                        timestamp = System.currentTimeMillis(),
-                        wordCount = entryWordCount,
-                        projectId = selectedProject.id,
-                    )
+                    timestamp = System.currentTimeMillis(),
+                    wordCount = entryWordCount,
+                    projectId = selectedProject.id,
+                    updateWordCountStrategy = EntryRepository.UpdateWordCountStrategy.ADD,
                 )
             }
             wordCountInput.value = ""

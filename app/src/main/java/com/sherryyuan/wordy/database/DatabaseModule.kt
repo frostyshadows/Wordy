@@ -25,8 +25,8 @@ object DatabaseModule {
 
     @Singleton
     @Provides
-    fun provideEntryDao(database: AppDatabase): EntryDao {
-        return database.entryDao()
+    fun provideDailyEntryDao(database: AppDatabase): DailyEntryDao {
+        return database.dailyEntryDao()
     }
 
     @Singleton

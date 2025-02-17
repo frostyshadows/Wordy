@@ -16,13 +16,7 @@ sealed class EntriesViewState(
         data class MonthlyListEntries(
             // eg. January 2025
             val monthHeaderText: String,
-            val dailyEntries: List<DailyListEntries>
-        )
-
-        data class DailyListEntries(
-            // eg. Jan 1
-            val dateText: String,
-            val entries: List<DailyEntry>,
+            val dailyEntries: List<DailyEntry>
         )
     }
 
@@ -40,7 +34,8 @@ sealed class EntriesViewState(
     }
 
     data class DailyEntry(
-        val timeText: String,
+        // eg. January 1
+        val dateText: String,
         val wordCount: Int,
         val projectTitle: String,
     )
