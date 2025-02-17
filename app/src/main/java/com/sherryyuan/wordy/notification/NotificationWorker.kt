@@ -9,6 +9,7 @@ import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
 import androidx.core.app.RemoteInput
 import androidx.hilt.work.HiltWorker
@@ -96,6 +97,16 @@ class NotificationWorker @AssistedInject constructor(
                     )
                 }
             }
+            val addWordCountAction = createRemoteInputAction(
+                intentAction = ADD_WORD_COUNT_ACTION,
+                remoteInputKey = KEY_ADD_WORD_COUNT,
+                remoteInputLabel = R.string.notification_add_words_label,
+            )
+            val updateWordCountAction = createRemoteInputAction(
+                intentAction = UPDATE_WORD_COUNT_ACTION,
+                remoteInputKey = KEY_UPDATE_WORD_COUNT,
+                remoteInputLabel = R.string.notification_update_words_label,
+            )
             val notification =
                 NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_launcher_background)
@@ -110,15 +121,20 @@ class NotificationWorker @AssistedInject constructor(
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
                     .setAutoCancel(false)
                     .setContentIntent(openAppPendingIntent)
-                    .addAction(createAddWordsAction())
+                    .addAction(addWordCountAction)
+                    .addAction(updateWordCountAction)
 
             notificationManager.notify(id, notification.build())
         }
     }
 
-    private fun createAddWordsAction(): NotificationCompat.Action {
+    private fun createRemoteInputAction(
+        intentAction: String,
+        remoteInputKey: String,
+        @StringRes remoteInputLabel: Int,
+    ): NotificationCompat.Action {
         val intent = Intent(applicationContext, NotificationBroadcastReceiver::class.java).apply {
-            action = ADD_WORD_COUNT_ACTION
+            action = intentAction
             putExtra(NOTIFICATION_ID, id)
         }
         val addWordsPendingIntent = PendingIntent.getBroadcast(
@@ -127,13 +143,13 @@ class NotificationWorker @AssistedInject constructor(
             intent,
             PendingIntent.FLAG_MUTABLE,
         )
-        val remoteInput = RemoteInput.Builder(KEY_ADD_WORD_COUNT)
-            .setLabel(context.getString(R.string.notification_add_words_label))
+        val remoteInput = RemoteInput.Builder(remoteInputKey)
+            .setLabel(context.getString(remoteInputLabel))
             .build()
 
         return NotificationCompat.Action.Builder(
             R.drawable.ic_launcher_background,
-            context.getString(R.string.notification_add_words_label),
+            context.getString(remoteInputLabel),
             addWordsPendingIntent,
         )
             .addRemoteInput(remoteInput)
@@ -159,8 +175,12 @@ class NotificationWorker @AssistedInject constructor(
         const val NOTIFICATION_WORK_NAME = "wordy_notification_work"
         const val NOTIFICATION_ID = "wordy_notification_id"
         const val NOTIFICATION_REQUEST_CODE = 100
+
         const val ADD_WORD_COUNT_ACTION = "add_word_count_action"
         const val KEY_ADD_WORD_COUNT = "key_add_word_count"
+
+        const val UPDATE_WORD_COUNT_ACTION = "update_word_count_action"
+        const val KEY_UPDATE_WORD_COUNT = "key_update_word_count"
 
         private const val NOTIFICATION_CHANNEL_ID = "wordy_notification_channel_id"
     }

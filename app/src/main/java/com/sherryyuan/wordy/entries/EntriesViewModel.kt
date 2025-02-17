@@ -4,11 +4,11 @@ import android.icu.text.SimpleDateFormat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kizitonwose.calendar.core.yearMonth
-import com.sherryyuan.wordy.entitymodels.Entry
+import com.sherryyuan.wordy.entitymodels.DailyEntry
 import com.sherryyuan.wordy.entitymodels.Project
 import com.sherryyuan.wordy.entries.EntriesViewState.CalendarEntries.DailyCalendarEntries
-import com.sherryyuan.wordy.entries.EntriesViewState.ListEntries
 import com.sherryyuan.wordy.entries.EntriesViewState.CalendarEntriesProgress
+import com.sherryyuan.wordy.entries.EntriesViewState.ListEntries
 import com.sherryyuan.wordy.repositories.EntryRepository
 import com.sherryyuan.wordy.repositories.ProjectRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,7 +20,6 @@ import kotlinx.coroutines.flow.stateIn
 import java.time.Instant
 import java.time.YearMonth
 import java.time.ZoneId
-import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
@@ -33,7 +32,6 @@ class EntriesViewModel @Inject constructor(
 
     private val monthFormatter = SimpleDateFormat("MMMM yyyy", Locale.getDefault())
     private val dayFormatter = SimpleDateFormat("MMM d", Locale.getDefault())
-    private val timeFormatter = SimpleDateFormat("h:mm a", Locale.getDefault())
 
     private val selectedViewMode = MutableStateFlow(EntriesViewMode.LIST)
     private val showCurrentProjectOnly = MutableStateFlow(false)
@@ -88,7 +86,7 @@ class EntriesViewModel @Inject constructor(
         )
     }
 
-    private fun List<Entry>.toListEntries(
+    private fun List<DailyEntry>.toListEntries(
         projects: List<Project>,
         selectedProject: Project?,
         showCurrentProjectOnly: Boolean,
@@ -98,34 +96,21 @@ class EntriesViewModel @Inject constructor(
         } else {
             this
         }.groupBy { entry ->
-            val calendar = Calendar.getInstance().apply { timeInMillis = entry.timestamp }
-            monthFormatter.format(calendar.time)
+            monthFormatter.format(Date(entry.timestamp))
         }
 
-        val monthlyEntries = groupedByMonth.map { (month, monthEntries) ->
-            val groupedByDay = monthEntries.groupBy { entry ->
-                val calendar = Calendar.getInstance().apply { timeInMillis = entry.timestamp }
-                dayFormatter.format(calendar.time)
-            }
-
-            val dailyEntries = groupedByDay.map { (day, dayEntries) ->
-                val sortedDayEntries = dayEntries.sortedBy { it.timestamp }
-                ListEntries.DailyListEntries(
-                    dateText = day,
-                    entries = sortedDayEntries.map { entry ->
-                        val projectTitle =
-                            projects.firstOrNull { it.id == entry.projectId }?.title.orEmpty()
-                        EntriesViewState.DailyEntry(
-                            timeText = timeFormatter.format(Date(entry.timestamp)),
-                            wordCount = entry.wordCount,
-                            projectTitle = projectTitle,
-                        )
-                    }
-                )
-            }.sortedByDescending { it.entries.firstOrNull()?.timeText }
+        val monthlyEntries = groupedByMonth.map { (monthText, entries) ->
+            val dailyEntries = entries
+                .sortedByDescending { it.timestamp }
+                .map { entry ->
+                    val dateText = dayFormatter.format(Date(entry.timestamp))
+                    val projectTitle =
+                        projects.firstOrNull { it.id == entry.projectId }?.title.orEmpty()
+                    EntriesViewState.DailyEntry(dateText, entry.wordCount, projectTitle)
+                }
 
             ListEntries.MonthlyListEntries(
-                monthHeaderText = month,
+                monthHeaderText = monthText,
                 dailyEntries = dailyEntries,
             )
         }.sortedByDescending { monthly ->
@@ -139,7 +124,7 @@ class EntriesViewModel @Inject constructor(
         )
     }
 
-    private fun List<Entry>.toCalendarEntries(
+    private fun List<DailyEntry>.toCalendarEntries(
         projects: List<Project>,
         selectedProject: Project?,
     ): EntriesViewState.CalendarEntries {
@@ -153,7 +138,7 @@ class EntriesViewModel @Inject constructor(
                 progress = CalendarEntriesProgress.GoalAchieved,
                 entries = entriesForDate.map { entry ->
                     EntriesViewState.DailyEntry(
-                        timeText = timeFormatter.format(Date(entry.timestamp)),
+                        dateText = dayFormatter.format(Date(entry.timestamp)),
                         wordCount = entry.wordCount,
                         projectTitle = projects.firstOrNull { it.id == entry.projectId }?.title.orEmpty()
                     )
@@ -192,7 +177,7 @@ class EntriesViewModel @Inject constructor(
         )
     }
 
-    private fun List<Entry>.earliestYearMonth(): YearMonth {
+    private fun List<DailyEntry>.earliestYearMonth(): YearMonth {
         val earliestTimestamp = minOfOrNull { it.timestamp } ?: System.currentTimeMillis()
         val earliestLocalDate =
             Instant.ofEpochMilli(earliestTimestamp).atZone(ZoneId.systemDefault()).toLocalDate()
