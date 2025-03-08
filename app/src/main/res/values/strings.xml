@@ -27,10 +27,11 @@
     <string name="log_button_label">Log</string>
     <string name="words_message">%1$d words</string>
     <string name="words_today_message">\u0020words today</string>
-    <string name="words_today_message_template">%1$d words today</string>
+    <string name="words_today_message_template">%1$d of %2$d words today</string>
     <string name="in_project_message_template">In %1$s</string>
-    <string name="words_to_go_message">%1$d of %2$d words to go!</string>
+    <string name="words_to_go_message">%1$d to go!</string>
     <string name="goal_achieved">Daily goal achieved!</string>
+    <string name="invalid_input_warning">Please enter a valid number</string>
 
     <string name="no_selected_project_title">No project selected</string>
     <string name="just_writing_project_title">Just writing</string>
