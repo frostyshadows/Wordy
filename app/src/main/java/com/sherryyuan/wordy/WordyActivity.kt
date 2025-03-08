@@ -27,7 +27,6 @@ import androidx.work.WorkManager
 import com.sherryyuan.wordy.navigation.RootNavHost
 import com.sherryyuan.wordy.navigation.WordyBottomNavigationBar
 import com.sherryyuan.wordy.navigation.WordyTopAppBar
-import com.sherryyuan.wordy.notification.NotificationBroadcastReceiver
 import com.sherryyuan.wordy.notification.NotificationWorker
 import com.sherryyuan.wordy.notification.NotificationWorker.Companion.NOTIFICATION_ID
 import com.sherryyuan.wordy.notification.NotificationWorker.Companion.NOTIFICATION_WORK_NAME

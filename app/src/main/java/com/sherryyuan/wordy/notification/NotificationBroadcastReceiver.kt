@@ -26,6 +26,9 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
     @Inject
     lateinit var entryRepository: EntryRepository
 
+    @Inject
+    lateinit var notificationConfig: NotificationConfig
+
     private val scope = CoroutineScope(Dispatchers.Default)
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -36,8 +39,8 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
                         ?.getCharSequence(KEY_ADD_WORD_COUNT)
                     println("Adding word count: $wordCountInput")
                     val selectedProject = projectRepository.getSelectedProject().first()
-                    val wordCount =
-                        wordCountInput?.toString()?.toInt() // TODO: handle non-numeric input
+                    val wordCount = wordCountInput?.toString()?.toIntOrNull()
+                    notificationConfig.showRemoteInputWarningFlow.emit(wordCount == null)
                     if (selectedProject != null && wordCount != null) {
                         entryRepository.insertEntry(
                             timestamp = System.currentTimeMillis(),
@@ -55,8 +58,8 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
                         ?.getCharSequence(KEY_UPDATE_WORD_COUNT)
                     println("Updating word count: $wordCountInput")
                     val selectedProject = projectRepository.getSelectedProject().first()
-                    val wordCount =
-                        wordCountInput?.toString()?.toInt() // TODO: handle non-numeric input
+                    val wordCount = wordCountInput?.toString()?.toIntOrNull()
+                    notificationConfig.showRemoteInputWarningFlow.emit(wordCount == null)
                     if (selectedProject != null && wordCount != null) {
                         entryRepository.insertEntry(
                             timestamp = System.currentTimeMillis(),

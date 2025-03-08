@@ -24,11 +24,11 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.combine
 
-
 @HiltWorker
 class NotificationWorker @AssistedInject constructor(
     private val projectRepository: ProjectRepository,
     private val entryRepository: EntryRepository,
+    private val notificationConfig: NotificationConfig,
     @Assisted private val context: Context,
     @Assisted params: WorkerParameters,
 ) : CoroutineWorker(context, params) {
@@ -70,30 +70,33 @@ class NotificationWorker @AssistedInject constructor(
         combine(
             projectRepository.getSelectedProject(),
             entryRepository.getEntriesForToday(),
-        ) { selectedProject, entries ->
+            notificationConfig.showRemoteInputWarningFlow,
+        ) { selectedProject, entries, showRemoteInputWarning ->
             val wordCount = entries
                 .filter { it.projectId == selectedProject?.id }
                 .sumOf { it.wordCount }
-            Pair(selectedProject, wordCount)
-
-        }.collect { (project, wordCount) ->
-            val wordCountGoal = project?.goal?.dailyWordCount
+            Triple(selectedProject, wordCount, showRemoteInputWarning)
+        }.collect { (project, wordCount, showRemoteInputWarning) ->
+            if (project == null) return@collect
+            val wordCountGoal = project.goal.dailyWordCount
 
             val title = buildString {
-                append(context.getString(R.string.words_today_message_template, wordCount))
-                if (wordCountGoal != null && wordCount >= wordCountGoal) {
+                append(
+                    context.getString(
+                        R.string.words_today_message_template,
+                        wordCount,
+                        wordCountGoal,
+                    )
+                )
+                if (wordCount >= wordCountGoal) {
                     append(" • ")
                     append(context.getString(R.string.goal_achieved))
-                    append(" \uD83C\uDF89") // :tada: party popper emoji
-                } else if (wordCountGoal != null) {
+                    append(" \uD83C\uDF89") // 🎉
+                } else {
                     val remainingWordCount = wordCountGoal - wordCount
                     append(" • ")
                     append(
-                        context.getString(
-                            R.string.words_to_go_message,
-                            remainingWordCount,
-                            wordCountGoal,
-                        )
+                        context.getString(R.string.words_to_go_message, remainingWordCount)
                     )
                 }
             }
@@ -114,10 +117,11 @@ class NotificationWorker @AssistedInject constructor(
                     .maybeSetMessage(
                         context.getString(
                             R.string.in_project_message_template,
-                            project?.title,
+                            project.title,
                         )
                     )
                     .maybeSetProgress(wordCountGoal, wordCount)
+                    .maybeSetRemoteInputWarning(showRemoteInputWarning)
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
                     .setAutoCancel(false)
                     .setContentIntent(openAppPendingIntent)
@@ -169,6 +173,16 @@ class NotificationWorker @AssistedInject constructor(
         return max?.let {
             setProgress(it, progress, false)
         } ?: this
+    }
+
+    private fun NotificationCompat.Builder.maybeSetRemoteInputWarning(
+        showWarning: Boolean,
+  ): NotificationCompat.Builder {
+        return if (showWarning) {
+            setRemoteInputHistory(arrayOf(context.getString(R.string.invalid_input_warning)))
+        } else {
+            this
+        }
     }
 
     companion object {
