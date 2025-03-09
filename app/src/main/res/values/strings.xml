@@ -34,7 +34,7 @@
     <string name="invalid_input_warning">Please enter a valid number</string>
 
     <string name="no_selected_project_title">No project selected</string>
-    <string name="just_writing_project_title">Just writing</string>
+    <string name="default_just_write_project_title">Just writing</string>
 
     <string name="entries_list_label">List</string>
     <string name="entries_calendar_label">Calendar</string>

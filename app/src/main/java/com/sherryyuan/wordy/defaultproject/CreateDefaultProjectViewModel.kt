@@ -2,11 +2,10 @@ package com.sherryyuan.wordy.defaultproject
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sherryyuan.wordy.entitymodels.DEFAULT_JUST_WRITE_PROJECT_TITLE
+import com.sherryyuan.wordy.entitymodels.DEFAULT_JUST_WRITE_PROJECT_ID
 import com.sherryyuan.wordy.entitymodels.Goal
 import com.sherryyuan.wordy.entitymodels.Project
 import com.sherryyuan.wordy.entitymodels.ProjectStatus
-import com.sherryyuan.wordy.newproject.CreateNewProjectViewState
 import com.sherryyuan.wordy.repositories.ProjectRepository
 import com.sherryyuan.wordy.utils.DIGITS_REGEX
 import com.sherryyuan.wordy.utils.MAX_WORD_COUNT_DIGITS
@@ -37,10 +36,11 @@ class CreateDefaultProjectViewModel @Inject constructor(
         }
     }
 
-    fun saveDefaultProject() {
+    fun saveDefaultProject(title: String) {
         val wordCount = wordCountInput.value.toInt()
         val newProject = Project(
-            title = DEFAULT_JUST_WRITE_PROJECT_TITLE,
+            id = DEFAULT_JUST_WRITE_PROJECT_ID,
+            title = title,
             description = null,
             goal = Goal.DailyWordCountGoal(wordCount),
             status = ProjectStatus.IN_PROGRESS,

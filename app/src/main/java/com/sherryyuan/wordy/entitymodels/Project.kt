@@ -6,9 +6,7 @@ import com.sherryyuan.wordy.utils.getDaysBetween
 import com.squareup.moshi.JsonClass
 import java.util.Date
 
-// Placeholder title when users want to set a daily word count goal without a specific project.
-// When displaying the project in-app, show R.string.just_writing_project_title instead.
-const val DEFAULT_JUST_WRITE_PROJECT_TITLE = "default_just_write_project"
+const val DEFAULT_JUST_WRITE_PROJECT_ID = 31415926L
 
 @Entity
 data class Project(

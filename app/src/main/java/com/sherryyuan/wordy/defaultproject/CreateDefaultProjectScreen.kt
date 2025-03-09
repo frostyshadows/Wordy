@@ -33,6 +33,7 @@ fun CreateDefaultProjectScreen(
     viewModel: CreateDefaultProjectViewModel = hiltViewModel<CreateDefaultProjectViewModel>(),
 ) {
     val viewState by viewModel.state.collectAsState()
+    val defaultProjectTitle = stringResource(R.string.default_just_write_project_title)
 
     LaunchedEffect(viewState.state) {
         if (viewState.state == CreateDefaultProjectViewState.State.SUBMITTED) {
@@ -68,7 +69,7 @@ fun CreateDefaultProjectScreen(
             modifier = Modifier.fillMaxWidth(),
             enabled = viewState.state != CreateDefaultProjectViewState.State.SUBMITTING &&
                     viewState.wordCount.isNotBlank(),
-            onClick = { viewModel.saveDefaultProject() }
+            onClick = { viewModel.saveDefaultProject(defaultProjectTitle) }
         ) {
             Text(stringResource(R.string.confirm_label))
         }

@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.sherryyuan.wordy.entitymodels.DEFAULT_JUST_WRITE_PROJECT_TITLE
+import com.sherryyuan.wordy.entitymodels.DEFAULT_JUST_WRITE_PROJECT_ID
 import com.sherryyuan.wordy.entitymodels.Goal
 import com.sherryyuan.wordy.entitymodels.Project
 import com.sherryyuan.wordy.entitymodels.ProjectStatus
@@ -16,8 +16,8 @@ interface ProjectDao {
     @Query("SELECT * FROM Project")
     fun getAll(): Flow<List<Project>>
 
-    @Query("SELECT EXISTS(SELECT * FROM Project WHERE title = :defaultTitle)")
-    suspend fun hasDefaultProject(defaultTitle: String = DEFAULT_JUST_WRITE_PROJECT_TITLE): Boolean
+    @Query("SELECT EXISTS(SELECT * FROM Project WHERE id = :defaultId)")
+    suspend fun hasDefaultProject(defaultId: Long = DEFAULT_JUST_WRITE_PROJECT_ID): Boolean
 
     /**
      * @return ID of the inserted project
@@ -39,6 +39,6 @@ interface ProjectDao {
         status: ProjectStatus,
     )
 
-    @Query("DELETE FROM Project WHERE title = :defaultTitle")
-    suspend fun deleteDefaultProject(defaultTitle: String = DEFAULT_JUST_WRITE_PROJECT_TITLE)
+    @Query("DELETE FROM Project WHERE id = :defaultId")
+    suspend fun deleteDefaultProject(defaultId: Long = DEFAULT_JUST_WRITE_PROJECT_ID)
 }
