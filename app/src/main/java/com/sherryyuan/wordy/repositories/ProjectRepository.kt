@@ -2,7 +2,6 @@ package com.sherryyuan.wordy.repositories
 
 import com.sherryyuan.wordy.database.ProjectDao
 import com.sherryyuan.wordy.database.SelectedProjectDao
-import com.sherryyuan.wordy.entitymodels.DEFAULT_JUST_WRITE_PROJECT_TITLE
 import com.sherryyuan.wordy.entitymodels.Project
 import com.sherryyuan.wordy.entitymodels.SelectedProject
 import kotlinx.coroutines.flow.Flow
@@ -22,9 +21,6 @@ class ProjectRepository @Inject constructor(
      * @return ID of the inserted project
      */
     suspend fun insertProject(project: Project): Long {
-        if (project.title == DEFAULT_JUST_WRITE_PROJECT_TITLE) {
-            projectDao.deleteDefaultProject()
-        }
         return projectDao.insertProject(project)
     }
 
