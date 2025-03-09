@@ -4,13 +4,20 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
@@ -26,8 +33,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -50,38 +59,41 @@ fun CreateNewProjectScreen(
         }
     }
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            when (viewState.state) {
-                CreateNewProjectViewState.State.EDITING_INFO -> {
-                    ProjectInfoEditor(
-                        viewState = viewState,
-                        onTitleChange = viewModel::setTitle,
-                        onDescriptionChange = viewModel::setDescription,
-                        onNextClick = viewModel::continueToEditGoal,
-                        onGoalTypeSelected = viewModel::setGoalType,
-                    )
-                }
-
-                CreateNewProjectViewState.State.EDITING_WORD_COUNT_GOAL,
-                CreateNewProjectViewState.State.SUBMITTING_WORD_COUNT_GOAL,
-                -> WordCountGoalEditor(
+    val bottomPadding =
+        (24.dp - WindowInsets.ime.asPaddingValues().calculateBottomPadding()).coerceAtLeast(0.dp)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(start = 24.dp, top = 24.dp, end = 24.dp, bottom = bottomPadding)
+            .imePadding(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        when (viewState.state) {
+            CreateNewProjectViewState.State.EDITING_INFO -> {
+                ProjectInfoEditor(
                     viewState = viewState,
-                    onWordCountChange = viewModel::updateWordCount,
-                    onSubmitClick = viewModel::saveProject,
+                    onTitleChange = viewModel::setTitle,
+                    onDescriptionChange = viewModel::setDescription,
+                    onNextClick = viewModel::continueToEditGoal,
+                    onGoalTypeSelected = viewModel::setGoalType,
                 )
-
-                CreateNewProjectViewState.State.EDITING_DEADLINE_GOAL,
-                CreateNewProjectViewState.State.SUBMITTING_DEADLINE_GOAL,
-                -> TODO()
-
-                CreateNewProjectViewState.State.SUBMITTED -> Unit
             }
+
+            CreateNewProjectViewState.State.EDITING_WORD_COUNT_GOAL,
+            CreateNewProjectViewState.State.SUBMITTING_WORD_COUNT_GOAL,
+            -> WordCountGoalEditor(
+                viewState = viewState,
+                onWordCountChange = viewModel::updateWordCount,
+                onSubmitClick = viewModel::saveProject,
+            )
+
+            CreateNewProjectViewState.State.EDITING_DEADLINE_GOAL,
+            CreateNewProjectViewState.State.SUBMITTING_DEADLINE_GOAL,
+            -> TODO()
+
+            CreateNewProjectViewState.State.SUBMITTED -> Unit
         }
+    }
 }
 
 @Composable
@@ -92,47 +104,53 @@ private fun ColumnScope.ProjectInfoEditor(
     onGoalTypeSelected: (NewProjectGoal) -> Unit,
     onNextClick: () -> Unit,
 ) {
-    Text(
-        buildAnnotatedString {
-            append(stringResource(R.string.new_project_title))
-            withStyle(style = SpanStyle(color = Color.Red)) {
-                append("*")
+    Column(
+        modifier = Modifier
+            .verticalScroll(rememberScrollState())
+            .weight(1f)
+            .padding(bottom = 8.dp)
+    ) {
+        Text(
+            buildAnnotatedString {
+                append(stringResource(R.string.new_project_title))
+                withStyle(style = SpanStyle(color = Color.Red)) {
+                    append("*")
+                }
             }
-        }
-    )
-    TextField(
-        modifier = Modifier.fillMaxWidth(),
-        value = viewState.title,
-        onValueChange = {
-            onTitleChange(it)
-        },
-    )
-    VerticalSpacer()
+        )
+        TextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = viewState.title,
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+            onValueChange = {
+                onTitleChange(it)
+            },
+        )
+        VerticalSpacer()
 
-    Text(stringResource(R.string.new_project_description))
-    TextField(
-        modifier = Modifier.fillMaxWidth(),
-        value = viewState.description.orEmpty(),
-        onValueChange = {
-            onDescriptionChange(it)
-        },
-    )
-    VerticalSpacer()
+        Text(stringResource(R.string.new_project_description))
+        TextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = viewState.description.orEmpty(),
+            onValueChange = {
+                onDescriptionChange(it)
+            },
+        )
+        VerticalSpacer()
 
-    Text(stringResource(R.string.new_project_goal_type))
-    VerticalSpacer(heightDp = 12)
-    GoalOptionRadioButton(
-        selected = viewState.goal is NewProjectGoal.WordCount,
-        onSelect = { onGoalTypeSelected(NewProjectGoal.WordCount()) },
-        labelRes = R.string.new_project_daily_goal_description,
-    )
-    GoalOptionRadioButton(
-        selected = viewState.goal is NewProjectGoal.Deadline,
-        onSelect = { onGoalTypeSelected(NewProjectGoal.Deadline()) },
-        labelRes = R.string.new_project_deadline_goal_description,
-    )
-
-    Spacer(modifier = Modifier.weight(1f))
+        Text(stringResource(R.string.new_project_goal_type))
+        VerticalSpacer(heightDp = 8)
+        GoalOptionRadioButton(
+            selected = viewState.goal is NewProjectGoal.WordCount,
+            onSelect = { onGoalTypeSelected(NewProjectGoal.WordCount()) },
+            labelRes = R.string.new_project_daily_goal_description,
+        )
+        GoalOptionRadioButton(
+            selected = viewState.goal is NewProjectGoal.Deadline,
+            onSelect = { onGoalTypeSelected(NewProjectGoal.Deadline()) },
+            labelRes = R.string.new_project_deadline_goal_description,
+        )
+    }
 
     Button(
         modifier = Modifier.fillMaxWidth(),
@@ -177,9 +195,7 @@ private fun ColumnScope.WordCountGoalEditor(
     onSubmitClick: () -> Unit,
 ) {
     Text(viewState.title)
-    VerticalSpacer(
-
-    )
+    VerticalSpacer()
     Text(stringResource(R.string.want_to_write_header))
 
     Row(verticalAlignment = Alignment.CenterVertically) {
