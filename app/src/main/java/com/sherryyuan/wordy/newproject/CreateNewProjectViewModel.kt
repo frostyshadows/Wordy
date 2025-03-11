@@ -69,6 +69,21 @@ class CreateNewProjectViewModel @Inject constructor(
         }
     }
 
+    fun updateStartDate(input: Long) {
+        val currentGoal = goal.value as? NewProjectGoal.Deadline ?: return
+        val updatedGoal = currentGoal.copy(projectStartDateMillis = input)
+        goal.value = updatedGoal
+    }
+
+    fun updateEndDate(input: Long) {
+        val currentGoal = goal.value as? NewProjectGoal.Deadline ?: return
+        if (input <= currentGoal.projectStartDateMillis) {
+            return // TODO show warning
+        }
+        val updatedGoal = currentGoal.copy(targetProjectEndDateMillis = input)
+        goal.value = updatedGoal
+    }
+
     fun saveProject() {
         when (val goal = goal.value) {
             is NewProjectGoal.WordCount -> viewModelScope.launch {
@@ -76,7 +91,10 @@ class CreateNewProjectViewModel @Inject constructor(
                 projectRepository.updateSelectedProject(projectId)
             }
 
-            is NewProjectGoal.Deadline -> TODO()
+            is NewProjectGoal.Deadline -> viewModelScope.launch {
+                val projectId = saveDeadlineProject(goal)
+                projectRepository.updateSelectedProject(projectId)
+            }
         }
     }
 
@@ -91,6 +109,30 @@ class CreateNewProjectViewModel @Inject constructor(
             status = ProjectStatus.IN_PROGRESS,
         )
         currentState.value = State.SUBMITTING_WORD_COUNT_GOAL
+        // TODO handle duplicate titles
+        val newProjectId = projectRepository.insertProject(newProject)
+        if (projectRepository.getSelectedProject().first() == null) {
+            projectRepository.updateSelectedProject(newProjectId)
+        }
+        currentState.value = State.SUBMITTED
+        return newProjectId
+    }
+
+    /**
+     * @return id of new project
+     */
+    private suspend fun saveDeadlineProject(goal: NewProjectGoal.Deadline): Long {
+        val newProject = Project(
+            title = titleInput.value,
+            description = descriptionInput.value,
+            goal = Goal.DeadlineGoal(
+                targetTotalWordCount = goal.targetTotalWordCount.toInt(),
+                startDateMillis = goal.projectStartDateMillis,
+                targetEndDateMillis = goal.targetProjectEndDateMillis,
+            ),
+            status = ProjectStatus.IN_PROGRESS,
+        )
+        currentState.value = State.SUBMITTING_DEADLINE_GOAL
         // TODO handle duplicate titles
         val newProjectId = projectRepository.insertProject(newProject)
         if (projectRepository.getSelectedProject().first() == null) {

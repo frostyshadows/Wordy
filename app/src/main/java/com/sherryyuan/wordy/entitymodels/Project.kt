@@ -4,7 +4,6 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.sherryyuan.wordy.utils.getDaysBetween
 import com.squareup.moshi.JsonClass
-import java.util.Date
 
 const val DEFAULT_JUST_WRITE_PROJECT_ID = 31415926L
 
@@ -36,12 +35,12 @@ sealed interface Goal {
     @JsonClass(generateAdapter = true)
     data class DeadlineGoal(
         val targetTotalWordCount: Int,
-        val projectStartTime: Date,
-        val targetProjectEndTime: Date,
+        val startDateMillis: Long,
+        val targetEndDateMillis: Long,
     ) : Goal {
         override val dailyWordCount: Int
             get() {
-                val days = getDaysBetween(startDate = projectStartTime, endDate = targetProjectEndTime)
+                val days = getDaysBetween(startDateMillis, targetEndDateMillis)
                 return (targetTotalWordCount / days).toInt()
             }
     }
