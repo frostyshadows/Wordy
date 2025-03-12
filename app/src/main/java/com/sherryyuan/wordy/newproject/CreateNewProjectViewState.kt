@@ -31,7 +31,8 @@ data class CreateNewProjectViewState(
             val dailyWordCount: Int
                 get() {
                     // TODO handle case where start date is in wrong time zone (eg. select tomorrow but get 0 as days between when it should be 1)
-                    val days = getDaysBetween(projectStartDateMillis, targetProjectEndDateMillis)
+                    // start and end dates are inclusive
+                    val days = getDaysBetween(projectStartDateMillis, targetProjectEndDateMillis) + 1
                     return (targetTotalWordCount.toInt() / days).toInt()
                 }
         }
