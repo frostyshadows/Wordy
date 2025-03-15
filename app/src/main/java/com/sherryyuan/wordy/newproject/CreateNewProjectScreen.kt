@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,12 +34,11 @@ fun CreateNewProjectScreen(
         }
     }
 
-    val bottomPadding =
-        (24.dp - WindowInsets.ime.asPaddingValues().calculateBottomPadding()).coerceAtLeast(0.dp)
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(start = 24.dp, top = 24.dp, end = 24.dp, bottom = bottomPadding)
+            .padding(start = 24.dp, top = 24.dp, end = 24.dp)
+            .navigationBarsPadding()
             .imePadding(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
