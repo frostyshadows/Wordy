@@ -1,7 +1,5 @@
 package com.sherryyuan.wordy.home
 
-import com.sherryyuan.wordy.entitymodels.Project
-
 sealed interface HomeViewState {
     data object Loading : HomeViewState
 
@@ -11,5 +9,14 @@ sealed interface HomeViewState {
         val currentWordCountInput: String,
         val wordsToday: Int,
         val dailyWordCountGoal: Int,
+        val selectedDisplayedChartRange: DisplayedChartRange,
+        val chartWordCounts: Map<Long, Int>, // date timestamp to word count
     ) : HomeViewState
+
+    enum class DisplayedChartRange {
+        WEEK,
+        MONTH,
+        ALL_TIME,
+        PROJECT_WITH_DEADLINE,
+    }
 }
