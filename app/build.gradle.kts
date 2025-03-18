@@ -9,12 +9,12 @@ plugins {
 
 android {
     namespace = "com.sherryyuan.wordy"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.sherryyuan.wordy"
         minSdk = 26
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -67,6 +67,8 @@ dependencies {
     implementation(libs.moshi)
     implementation(libs.moshi.adapters)
     implementation(libs.moshi.kotlin)
+    implementation(libs.vico.compose)
+    implementation(libs.vico.compose.m3)
 
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)

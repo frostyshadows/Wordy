@@ -20,6 +20,7 @@ import com.sherryyuan.wordy.MainActivity
 import com.sherryyuan.wordy.R
 import com.sherryyuan.wordy.repositories.EntryRepository
 import com.sherryyuan.wordy.repositories.ProjectRepository
+import com.sherryyuan.wordy.utils.fromPastDays
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.combine
@@ -69,10 +70,11 @@ class NotificationWorker @AssistedInject constructor(
 
         combine(
             projectRepository.getSelectedProject(),
-            entryRepository.getEntriesForToday(),
+            entryRepository.getEntries(),
             notificationConfig.showRemoteInputWarningFlow,
         ) { selectedProject, entries, showRemoteInputWarning ->
             val wordCount = entries
+                .fromPastDays(1)
                 .filter { it.projectId == selectedProject?.id }
                 .sumOf { it.wordCount }
             Triple(selectedProject, wordCount, showRemoteInputWarning)

@@ -48,19 +48,6 @@ class EntryRepository @Inject constructor(private val dailyEntryDao: DailyEntryD
         return dailyEntryDao.getAll()
     }
 
-    fun getEntriesForToday(): Flow<List<DailyEntry>> {
-        return getEntries().map { entries ->
-            entries.filter { entry ->
-                val midnight = LocalDate.now()
-                    .atStartOfDay(ZoneId.systemDefault())
-                    .toInstant()
-                    .toEpochMilli()
-
-                entry.timestamp >= midnight
-            }
-        }
-    }
-
     private fun getStartOfDayTimestamp(timeStamp: Long): Long =
         LocalDateTime.ofInstant(Instant.ofEpochMilli(timeStamp), ZoneId.systemDefault())
             .toLocalDate()
