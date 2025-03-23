@@ -76,11 +76,11 @@ fun ProjectSwitcherSheet(
 private fun ProjectWithSelectionRow(
     option: ProjectSwitcherOption.ProjectWithSelection,
     rowHeight: Float,
-    onClick: (Project) -> Unit,
+    onClick: () -> Unit,
 ) {
     Row(
         modifier = Modifier
-            .clickable { onClick(option.project) }
+            .clickable { onClick() }
             .height(rowHeight.dp)
             .padding(horizontal = 24.dp),
     ) {

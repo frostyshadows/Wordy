@@ -20,6 +20,7 @@ data class Project(
 enum class ProjectStatus {
     NOT_STARTED,
     IN_PROGRESS,
+    ON_HOLD,
     COMPLETED,
 }
 

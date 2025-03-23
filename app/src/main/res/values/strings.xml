@@ -48,4 +48,14 @@
     <string name="entries_list_label">List</string>
     <string name="entries_calendar_label">Calendar</string>
     <string name="show_selected_project">Only show selected project</string>
+
+    <string name="in_progress_status_label">In progress</string>
+    <string name="not_started_status_label">Not started</string>
+    <string name="on_hold_status_label">On hold</string>
+    <string name="completed_status_label">Completed</string>
+    <string name="daily_goal_progress_template">Progress: %1$d words so far</string>
+    <string name="daily_goal_goal_template">Goal: %1$d words per day</string>
+    <string name="deadline_goal_progress_template">Progress: %1$d%% (%2$d out of %3$d words)</string>
+    <string name="deadline_goal_goal_template">Goal: %1$d words by %2$s</string>
+    <string name="edit_label">Edit</string>
 </resources>

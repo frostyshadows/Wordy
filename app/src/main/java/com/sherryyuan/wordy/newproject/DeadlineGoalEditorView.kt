@@ -42,6 +42,7 @@ import com.sherryyuan.wordy.R
 import com.sherryyuan.wordy.entitymodels.Goal
 import com.sherryyuan.wordy.newproject.CreateNewProjectViewState.NewProjectGoal
 import com.sherryyuan.wordy.ui.theme.VerticalSpacer
+import com.sherryyuan.wordy.utils.toFormattedTimeString
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -187,9 +188,9 @@ private fun DatePickerInputField(
     var showModal by remember { mutableStateOf(false) }
 
     TextField(
-        value = convertMillisToDate(selectedDateMillis),
+        value = selectedDateMillis.toFormattedTimeString("MM/dd/yyyy"),
         onValueChange = { },
-        placeholder = { Text(convertMillisToDate(selectedDateMillis)) },
+        placeholder = { selectedDateMillis.toFormattedTimeString("MM/dd/yyyy") },
         trailingIcon = {
             Icon(Icons.Default.DateRange, contentDescription = "Select date")
         },
@@ -225,11 +226,6 @@ private fun DatePickerInputField(
             onDismiss = { showModal = false }
         )
     }
-}
-
-fun convertMillisToDate(millis: Long): String {
-    val formatter = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
-    return formatter.format(Date(millis))
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
