@@ -19,6 +19,7 @@ import com.sherryyuan.wordy.home.HomeScreen
 import com.sherryyuan.wordy.newproject.CreateNewProjectScreen
 import com.sherryyuan.wordy.onboarding.RootScreen
 import com.sherryyuan.wordy.onboarding.WelcomeScreen
+import com.sherryyuan.wordy.projectlist.ProjectListScreen
 import kotlin.reflect.KType
 
 @Composable
@@ -41,7 +42,7 @@ fun RootNavHost(navController: NavHostController, modifier: Modifier = Modifier)
             HomeScreen()
         }
         composable<WordyNavDestination.Projects> {
-            Text("projects")
+            ProjectListScreen()
         }
         composable<WordyNavDestination.CreateNewProject> {
             CreateNewProjectScreen(navController)

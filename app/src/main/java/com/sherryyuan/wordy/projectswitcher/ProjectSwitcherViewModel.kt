@@ -3,6 +3,7 @@ package com.sherryyuan.wordy.projectswitcher
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sherryyuan.wordy.entitymodels.Project
+import com.sherryyuan.wordy.entitymodels.ProjectStatus
 import com.sherryyuan.wordy.repositories.ProjectRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -30,7 +31,9 @@ class ProjectSwitcherViewModel @Inject constructor(
             projectRepository.getSelectedProject(),
             projectRepository.getProjects(),
         ) { selectedProject, projects ->
-            val options = projects.map {
+            val options = projects
+                .filter { it.status == ProjectStatus.IN_PROGRESS }
+                .map {
                 ProjectSwitcherOption.ProjectWithSelection(
                     project = it,
                     isSelected = it.id == selectedProject?.id
