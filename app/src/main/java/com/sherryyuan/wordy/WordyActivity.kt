@@ -30,7 +30,7 @@ import com.sherryyuan.wordy.navigation.WordyTopAppBar
 import com.sherryyuan.wordy.notification.NotificationWorker
 import com.sherryyuan.wordy.notification.NotificationWorker.Companion.NOTIFICATION_ID
 import com.sherryyuan.wordy.notification.NotificationWorker.Companion.NOTIFICATION_WORK_NAME
-import com.sherryyuan.wordy.projectswitcher.ProjectSwitcherSheet
+import com.sherryyuan.wordy.screens.projectswitcher.ProjectSwitcherSheet
 import com.sherryyuan.wordy.ui.theme.WordyTheme
 import com.sherryyuan.wordy.utils.shouldShowAppBars
 import dagger.hilt.android.AndroidEntryPoint

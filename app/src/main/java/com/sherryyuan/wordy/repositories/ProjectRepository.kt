@@ -17,6 +17,10 @@ class ProjectRepository @Inject constructor(
         return projectDao.getAll()
     }
 
+    fun getProjectsById(id: Long): Flow<Project> {
+        return projectDao.getProjectById(id)
+    }
+
     /**
      * @return ID of the inserted project
      */
