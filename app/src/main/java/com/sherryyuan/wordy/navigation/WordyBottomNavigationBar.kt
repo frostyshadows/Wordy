@@ -22,7 +22,7 @@ fun WordyBottomNavigationBar(
         mapOf(
             WordyNavDestination.Entries to R.drawable.list_icon,
             WordyNavDestination.Home to R.drawable.pen_icon,
-            WordyNavDestination.Projects to R.drawable.project_icon,
+            WordyNavDestination.ProjectsList to R.drawable.project_icon,
         )
     }
 

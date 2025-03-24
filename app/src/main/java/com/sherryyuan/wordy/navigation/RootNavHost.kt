@@ -3,7 +3,6 @@ package com.sherryyuan.wordy.navigation
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.End
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Start
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavBackStackEntry
@@ -13,13 +12,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.sherryyuan.wordy.defaultproject.CreateDefaultProjectScreen
-import com.sherryyuan.wordy.entries.EntriesScreen
-import com.sherryyuan.wordy.home.HomeScreen
-import com.sherryyuan.wordy.newproject.CreateNewProjectScreen
-import com.sherryyuan.wordy.onboarding.RootScreen
-import com.sherryyuan.wordy.onboarding.WelcomeScreen
-import com.sherryyuan.wordy.projectlist.ProjectListScreen
+import com.sherryyuan.wordy.screens.defaultproject.CreateDefaultProjectScreen
+import com.sherryyuan.wordy.screens.entries.EntriesScreen
+import com.sherryyuan.wordy.screens.home.HomeScreen
+import com.sherryyuan.wordy.screens.newproject.CreateNewProjectScreen
+import com.sherryyuan.wordy.screens.onboarding.RootScreen
+import com.sherryyuan.wordy.screens.onboarding.WelcomeScreen
+import com.sherryyuan.wordy.screens.projectdetail.ProjectDetailScreen
+import com.sherryyuan.wordy.screens.projectslist.ProjectsListScreen
 import kotlin.reflect.KType
 
 @Composable
@@ -35,20 +35,23 @@ fun RootNavHost(navController: NavHostController, modifier: Modifier = Modifier)
         composableWithDefaultTransitions<WordyNavDestination.Welcome> {
             WelcomeScreen(navController)
         }
+        composable<WordyNavDestination.CreateNewProject> {
+            CreateNewProjectScreen(navController)
+        }
+        composable<WordyNavDestination.CreateDefaultProject> {
+            CreateDefaultProjectScreen(navController)
+        }
         composable<WordyNavDestination.Entries> {
             EntriesScreen()
         }
         composableWithDefaultTransitions<WordyNavDestination.Home> {
             HomeScreen()
         }
-        composable<WordyNavDestination.Projects> {
-            ProjectListScreen()
+        composable<WordyNavDestination.ProjectsList> {
+            ProjectsListScreen(navController)
         }
-        composable<WordyNavDestination.CreateNewProject> {
-            CreateNewProjectScreen(navController)
-        }
-        composable<WordyNavDestination.CreateDefaultProject> {
-            CreateDefaultProjectScreen(navController)
+        composable<WordyNavDestination.ProjectDetail> {
+            ProjectDetailScreen()
         }
     }
 }

@@ -16,6 +16,9 @@ interface ProjectDao {
     @Query("SELECT * FROM Project")
     fun getAll(): Flow<List<Project>>
 
+    @Query("SELECT * FROM Project WHERE id = :id")
+    fun getProjectById(id: Long): Flow<Project>
+
     @Query("SELECT EXISTS(SELECT * FROM Project WHERE id = :defaultId)")
     suspend fun hasDefaultProject(defaultId: Long = DEFAULT_JUST_WRITE_PROJECT_ID): Boolean
 
