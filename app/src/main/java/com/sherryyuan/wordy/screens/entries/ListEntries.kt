@@ -1,6 +1,7 @@
 package com.sherryyuan.wordy.screens.entries
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,6 +19,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.sherryyuan.wordy.R
 import com.sherryyuan.wordy.ui.theme.HorizontalSpacer
 import com.sherryyuan.wordy.ui.theme.WordyTheme
@@ -27,6 +30,7 @@ import java.time.YearMonth
 fun ListEntries(
     entriesState: EntriesViewState.ListEntries,
     onShowCurrentProjectClick: () -> Unit,
+    contentPaddingBottom: Dp = 0.dp,
 ) {
     val monthsCollapsedState = remember(entriesState) {
         entriesState.monthlyEntries.map { false }.toMutableStateList()
@@ -41,7 +45,9 @@ fun ListEntries(
             Text(stringResource(R.string.show_selected_project))
         }
     }
-    LazyColumn {
+    LazyColumn(
+        contentPadding = PaddingValues(bottom = contentPaddingBottom)
+    ) {
         entriesState.monthlyEntries.forEachIndexed { i, entries ->
             val isCollapsed = monthsCollapsedState[i]
             item(entries.monthHeaderText) {

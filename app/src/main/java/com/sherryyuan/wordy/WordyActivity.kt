@@ -10,13 +10,14 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -26,13 +27,12 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import com.sherryyuan.wordy.navigation.RootNavHost
 import com.sherryyuan.wordy.navigation.WordyBottomNavigationBar
-import com.sherryyuan.wordy.navigation.WordyTopAppBar
 import com.sherryyuan.wordy.notification.NotificationWorker
 import com.sherryyuan.wordy.notification.NotificationWorker.Companion.NOTIFICATION_ID
 import com.sherryyuan.wordy.notification.NotificationWorker.Companion.NOTIFICATION_WORK_NAME
 import com.sherryyuan.wordy.screens.projectswitcher.ProjectSwitcherSheet
 import com.sherryyuan.wordy.ui.theme.WordyTheme
-import com.sherryyuan.wordy.utils.shouldShowAppBars
+import com.sherryyuan.wordy.utils.shouldShowBottomAppBar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -51,33 +51,29 @@ class MainActivity : ComponentActivity() {
             var showBottomSheet by remember { mutableStateOf(false) }
 
             WordyTheme {
-                Scaffold(
-                    topBar = {
-                        if (navBackStackEntry?.shouldShowAppBars() == true) {
-                            WordyTopAppBar(
-                                onProjectSwitcherClick = { showBottomSheet = true }
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background)
+                ) {
+                    Column {
+                        RootNavHost(
+                            modifier = Modifier.weight(1f),
+                            navController = navController,
+                            onProjectSwitcherClick = { showBottomSheet = true },
+                        )
+                        if (navBackStackEntry?.shouldShowBottomAppBar() == true) {
+                            WordyBottomNavigationBar(
+                                navController = navController,
+                                navBackStack = navBackStackEntry,
                             )
-                        }
-                    },
-                    bottomBar = {
-                        if (navBackStackEntry?.shouldShowAppBars() == true) {
-                            WordyBottomNavigationBar(navController, navBackStackEntry)
                         }
                     }
-                ) { contentPadding ->
-                    Box {
-                        RootNavHost(
-                            modifier = Modifier
-                                .padding(contentPadding)
-                                .background(MaterialTheme.colorScheme.background),
+                    if (showBottomSheet) {
+                        ProjectSwitcherSheet(
+                            onDismiss = { showBottomSheet = false },
                             navController = navController,
                         )
-                        if (showBottomSheet) {
-                            ProjectSwitcherSheet(
-                                onDismiss = { showBottomSheet = false },
-                                navController = navController,
-                            )
-                        }
                     }
                 }
             }

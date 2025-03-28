@@ -21,17 +21,25 @@ import com.sherryyuan.wordy.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WordyTopAppBar(
+fun ProjectSwitcherTopAppBar(
+    modifier: Modifier = Modifier,
     onProjectSwitcherClick: () -> Unit,
-    viewModel: WordyTopAppBarViewModel = hiltViewModel<WordyTopAppBarViewModel>(),
+    viewModel: ProjectSwitcherTopBarViewModel = hiltViewModel<ProjectSwitcherTopBarViewModel>(),
 ) {
 
     val selectedProject by viewModel.selectedProject.collectAsState()
 
     TopAppBar(
+        modifier = modifier,
         title = {
             selectedProject?.title?.let {
-                Text(modifier = Modifier.fillMaxWidth().padding(start = 24.dp), textAlign = TextAlign.Center, text = it)
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 24.dp),
+                    textAlign = TextAlign.Center,
+                    text = it,
+                )
             }
         },
         actions = {
