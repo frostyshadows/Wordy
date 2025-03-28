@@ -3,6 +3,8 @@ package com.sherryyuan.wordy.navigation
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -21,9 +23,9 @@ import com.sherryyuan.wordy.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WordyTopAppBar(
+fun ProjectSwitcherTopAppBar(
     onProjectSwitcherClick: () -> Unit,
-    viewModel: WordyTopAppBarViewModel = hiltViewModel<WordyTopAppBarViewModel>(),
+    viewModel: ProjectSwitcherTopBarViewModel = hiltViewModel<ProjectSwitcherTopBarViewModel>(),
 ) {
 
     val selectedProject by viewModel.selectedProject.collectAsState()
@@ -31,7 +33,13 @@ fun WordyTopAppBar(
     TopAppBar(
         title = {
             selectedProject?.title?.let {
-                Text(modifier = Modifier.fillMaxWidth().padding(start = 24.dp), textAlign = TextAlign.Center, text = it)
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 24.dp),
+                    textAlign = TextAlign.Center,
+                    text = it,
+                )
             }
         },
         actions = {
@@ -46,4 +54,39 @@ fun WordyTopAppBar(
             }
         }
     )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ProjectsListTopAppBar(
+    onAddProjectClick: () -> Unit,
+) {
+    TopAppBar(
+        title = {
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 24.dp),
+                textAlign = TextAlign.Center,
+                text = stringResource(R.string.projects_label),
+            )
+        },
+        actions = {
+            IconButton(
+                onClick = { onAddProjectClick() }
+            ) {
+                Icon(
+                    modifier = Modifier.size(24.dp),
+                    imageVector = Icons.Outlined.Add,
+                    contentDescription = stringResource(R.string.new_project_button),
+                )
+            }
+        }
+    )
+}
+
+enum class TopAppBarStyle {
+    NONE,
+    PROJECT_SWITCHER,
+    PROJECTS_LIST,
 }

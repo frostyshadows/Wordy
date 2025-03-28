@@ -26,13 +26,17 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import com.sherryyuan.wordy.navigation.RootNavHost
 import com.sherryyuan.wordy.navigation.WordyBottomNavigationBar
-import com.sherryyuan.wordy.navigation.WordyTopAppBar
+import com.sherryyuan.wordy.navigation.ProjectSwitcherTopAppBar
+import com.sherryyuan.wordy.navigation.ProjectsListTopAppBar
+import com.sherryyuan.wordy.navigation.TopAppBarStyle
+import com.sherryyuan.wordy.navigation.WordyNavDestination
 import com.sherryyuan.wordy.notification.NotificationWorker
 import com.sherryyuan.wordy.notification.NotificationWorker.Companion.NOTIFICATION_ID
 import com.sherryyuan.wordy.notification.NotificationWorker.Companion.NOTIFICATION_WORK_NAME
 import com.sherryyuan.wordy.screens.projectswitcher.ProjectSwitcherSheet
 import com.sherryyuan.wordy.ui.theme.WordyTheme
-import com.sherryyuan.wordy.utils.shouldShowAppBars
+import com.sherryyuan.wordy.navigation.shouldShowAppBars
+import com.sherryyuan.wordy.navigation.topBarStyle
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -53,10 +57,18 @@ class MainActivity : ComponentActivity() {
             WordyTheme {
                 Scaffold(
                     topBar = {
-                        if (navBackStackEntry?.shouldShowAppBars() == true) {
-                            WordyTopAppBar(
-                                onProjectSwitcherClick = { showBottomSheet = true }
-                            )
+                        when (navBackStackEntry?.topBarStyle()) {
+                            TopAppBarStyle.PROJECT_SWITCHER ->
+                                ProjectSwitcherTopAppBar(
+                                    onProjectSwitcherClick = { showBottomSheet = true }
+                                )
+
+                            TopAppBarStyle.PROJECTS_LIST ->
+                                ProjectsListTopAppBar(
+                                    onAddProjectClick = { navController.navigate(WordyNavDestination.CreateNewProject)}
+                                )
+
+                            else -> {}
                         }
                     },
                     bottomBar = {
