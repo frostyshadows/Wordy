@@ -28,18 +28,23 @@ interface ProjectDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertProject(project: Project): Long
 
-    @Query("UPDATE Project " +
-            "SET title= :title, " +
-            "description= :description, " +
-            "goal = :goal, " +
-            "status = :status " +
-            "WHERE id = :projectId")
+    @Query(
+        """
+        UPDATE Project 
+        SET 
+            title = COALESCE(:title, title),
+            description = COALESCE(:description, description),
+            goal = COALESCE(:goal, goal),
+            status = COALESCE(:status, status)
+        WHERE id = :projectId
+    """
+    )
     suspend fun updateProject(
         projectId: Long,
-        title: String,
-        description: String?,
-        goal: Goal,
-        status: ProjectStatus,
+        title: String? = null,
+        description: String? = null,
+        goal: Goal? = null,
+        status: ProjectStatus? = null,
     )
 
     @Query("DELETE FROM Project WHERE id = :defaultId")

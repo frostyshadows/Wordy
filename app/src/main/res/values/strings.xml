@@ -50,6 +50,7 @@
     <string name="show_selected_project">Only show selected project</string>
 
     <string name="projects_label">Projects</string>
+    <string name="project_detail_status_label">Status: </string>
     <string name="in_progress_status_label">In progress</string>
     <string name="not_started_status_label">Not started</string>
     <string name="on_hold_status_label">On hold</string>
