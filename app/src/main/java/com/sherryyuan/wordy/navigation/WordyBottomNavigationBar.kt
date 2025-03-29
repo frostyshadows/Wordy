@@ -56,9 +56,7 @@ fun WordyBottomNavigationBar(
                     selected = isOnDefaultDestination || isOnOtherDestination,
                     onClick = {
                         navController.navigate(screen.defaultDestination) {
-                            popUpTo(navController.graph.startDestinationId) {
-                                saveState = true
-                            }
+                            navController.popBackStack()
                             launchSingleTop = true
                             restoreState = true
                         }

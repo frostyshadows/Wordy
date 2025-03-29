@@ -1,6 +1,7 @@
 package com.sherryyuan.wordy.screens.entries
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -10,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -34,7 +36,9 @@ fun EntriesScreen(
         firstDayOfWeek = daysOfWeek.first(),
     )
 
-    Column {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+    ) {
         SingleChoiceSegmentedButtonRow {
             SegmentedButton(
                 onClick = { viewModel.onListViewClick() },

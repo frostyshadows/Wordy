@@ -1,11 +1,17 @@
 package com.sherryyuan.wordy.screens.projectslist
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Card
@@ -29,17 +35,31 @@ import com.sherryyuan.wordy.navigation.WordyNavDestination
 import com.sherryyuan.wordy.ui.theme.VerticalSpacer
 import com.sherryyuan.wordy.utils.toFormattedTimeString
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ProjectsListScreen(
     navController: NavController,
     viewModel: ProjectsListViewModel = hiltViewModel<ProjectsListViewModel>()
 ) {
     val viewState by viewModel.state.collectAsState()
-    Column(modifier = Modifier.padding(horizontal = 24.dp)) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+    ) {
         viewState.sections.forEach { section ->
             if (section.projectsWithWordCount.isEmpty()) return@forEach
-            Text(stringResource(section.titleRes))
-            section.projectsWithWordCount.forEach {
+            stickyHeader {
+                Text(
+                    modifier = Modifier
+                        .background(color = MaterialTheme.colorScheme.background)
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp, vertical = 8.dp),
+                    text = stringResource(section.titleRes),
+                )
+            }
+            items(
+                items = section.projectsWithWordCount,
+                key = { it.first.id },
+            ) {
                 ProjectCard(
                     projectWithWordCount = it,
                     onClick = {
