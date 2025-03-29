@@ -3,6 +3,8 @@ package com.sherryyuan.wordy.navigation
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.End
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Start
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavBackStackEntry
@@ -20,38 +22,67 @@ import com.sherryyuan.wordy.screens.onboarding.RootScreen
 import com.sherryyuan.wordy.screens.onboarding.WelcomeScreen
 import com.sherryyuan.wordy.screens.projectdetail.ProjectDetailScreen
 import com.sherryyuan.wordy.screens.projectslist.ProjectsListScreen
+import com.sherryyuan.wordy.utils.TOP_BAR_ANIMATION_KEY
 import kotlin.reflect.KType
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun RootNavHost(navController: NavHostController, modifier: Modifier = Modifier) {
-    NavHost(
-        modifier = modifier,
-        navController = navController,
-        startDestination = WordyNavDestination.Root,
-    ) {
-        composable<WordyNavDestination.Root> {
-            RootScreen(navController)
-        }
-        composableWithDefaultTransitions<WordyNavDestination.Welcome> {
-            WelcomeScreen(navController)
-        }
-        composable<WordyNavDestination.CreateNewProject> {
-            CreateNewProjectScreen(navController)
-        }
-        composable<WordyNavDestination.CreateDefaultProject> {
-            CreateDefaultProjectScreen(navController)
-        }
-        composable<WordyNavDestination.Entries> {
-            EntriesScreen()
-        }
-        composableWithDefaultTransitions<WordyNavDestination.Home> {
-            HomeScreen()
-        }
-        composable<WordyNavDestination.ProjectsList> {
-            ProjectsListScreen(navController)
-        }
-        composable<WordyNavDestination.ProjectDetail> {
-            ProjectDetailScreen()
+fun RootNavHost(
+    navController: NavHostController,
+    onProjectSwitcherClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    SharedTransitionLayout(modifier = modifier) {
+        NavHost(
+            navController = navController,
+            startDestination = WordyNavDestination.Root,
+        ) {
+            composable<WordyNavDestination.Root> {
+                RootScreen(navController)
+            }
+            composableWithDefaultTransitions<WordyNavDestination.Welcome> {
+                WelcomeScreen(navController)
+            }
+            composable<WordyNavDestination.CreateNewProject> {
+                CreateNewProjectScreen(navController)
+            }
+            composable<WordyNavDestination.CreateDefaultProject> {
+                CreateDefaultProjectScreen(navController)
+            }
+            composable<WordyNavDestination.Entries> {
+                EntriesScreen(
+                    topBar = {
+                        ProjectSwitcherTopAppBar(
+                            modifier = Modifier.sharedElement(
+                                state = rememberSharedContentState(key = TOP_BAR_ANIMATION_KEY),
+                                animatedVisibilityScope = this@composable,
+                            )
+                                .skipToLookaheadSize(),
+                            onProjectSwitcherClick = onProjectSwitcherClick,
+                        )
+                    }
+                )
+            }
+            composableWithDefaultTransitions<WordyNavDestination.Home> {
+                HomeScreen(
+                    topBar = {
+                        ProjectSwitcherTopAppBar(
+                            modifier = Modifier.sharedElement(
+                                state = rememberSharedContentState(key = TOP_BAR_ANIMATION_KEY),
+                                animatedVisibilityScope = this@composableWithDefaultTransitions,
+                            )
+                                .skipToLookaheadSize(),
+                            onProjectSwitcherClick = onProjectSwitcherClick,
+                        )
+                    }
+                )
+            }
+            composable<WordyNavDestination.ProjectsList> {
+                ProjectsListScreen(navController, topBarAnimatedVisibilityScope = this@composable)
+            }
+            composable<WordyNavDestination.ProjectDetail> {
+                ProjectDetailScreen()
+            }
         }
     }
 }

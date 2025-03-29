@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -60,24 +61,30 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun HomeScreen(
+    topBar: @Composable () -> Unit,
     viewModel: HomeViewModel = hiltViewModel<HomeViewModel>()
 ) {
     val viewState by viewModel.state.collectAsState()
-    when (val state = viewState) {
-        is HomeViewState.Loading -> {}
-        is HomeViewState.Loaded -> {
-            val keyboardController = LocalSoftwareKeyboardController.current
-            LoadedHomeScreen(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(24.dp),
-                viewState = state,
-                onWordCountInputChange = { viewModel.setWordCount(it) },
-                onWordCountInputSubmit = {
-                    viewModel.onWordCountInputSubmit()
-                    keyboardController?.hide()
-                }
-            )
+    Scaffold(
+        topBar = { topBar() }
+    ) { contentPadding ->
+        when (val state = viewState) {
+            is HomeViewState.Loading -> {}
+            is HomeViewState.Loaded -> {
+                val keyboardController = LocalSoftwareKeyboardController.current
+                LoadedHomeScreen(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(contentPadding)
+                        .padding(24.dp),
+                    viewState = state,
+                    onWordCountInputChange = { viewModel.setWordCount(it) },
+                    onWordCountInputSubmit = {
+                        viewModel.onWordCountInputSubmit()
+                        keyboardController?.hide()
+                    }
+                )
+            }
         }
     }
 }

@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
-class WordyTopAppBarViewModel @Inject constructor(
+class ProjectSwitcherTopBarViewModel @Inject constructor(
     projectRepository: ProjectRepository,
 ) : ViewModel() {
 
