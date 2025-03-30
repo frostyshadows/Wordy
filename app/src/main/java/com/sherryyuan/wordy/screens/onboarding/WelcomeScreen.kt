@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -18,15 +19,18 @@ import com.sherryyuan.wordy.navigation.WordyNavDestination
 import com.sherryyuan.wordy.navigation.previewNavController
 import com.sherryyuan.wordy.ui.theme.VerticalSpacer
 import com.sherryyuan.wordy.ui.theme.WordyTheme
+import com.sherryyuan.wordy.ui.topAndSideContentPadding
 
 @Composable
 fun WelcomeScreen(
     navController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
+    Scaffold { contentPadding ->
         Column(
             modifier = modifier
                 .fillMaxSize()
+                .topAndSideContentPadding(contentPadding)
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -42,18 +46,27 @@ fun WelcomeScreen(
             VerticalSpacer()
             Button(
                 modifier = Modifier.fillMaxWidth(),
-                onClick = { navController.navigate(WordyNavDestination.CreateNewProject) }
+                onClick = {
+                    navController.navigate(
+                        WordyNavDestination.CreateNewProject(isOnboarding = true)
+                    )
+                }
             ) {
                 Text(stringResource(R.string.new_project_button))
             }
             VerticalSpacer()
             Button(
                 modifier = Modifier.fillMaxWidth(),
-                onClick = { navController.navigate(WordyNavDestination.CreateDefaultProject) }
+                onClick = {
+                    navController.navigate(
+                        WordyNavDestination.CreateDefaultProject(isOnboarding = true)
+                    )
+                }
             ) {
                 Text(stringResource(R.string.just_write_button))
             }
         }
+    }
 }
 
 @Preview(showBackground = true)

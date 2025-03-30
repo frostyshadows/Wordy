@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -17,6 +16,7 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -42,6 +42,7 @@ fun ProjectSwitcherSheet(
     val viewState by viewModel.state.collectAsState()
 
     ModalBottomSheet(
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
         onDismissRequest = { onDismiss() }
     ) {
         val lineHeight = LocalTextStyle.current.lineHeight.value
@@ -75,7 +76,7 @@ fun ProjectSwitcherSheet(
                     ProjectSwitcherOption.NewProject -> NewProjectRow(
                         rowHeight = rowHeight,
                         onClick = {
-                            navController.navigate(WordyNavDestination.CreateNewProject)
+                            navController.navigate(WordyNavDestination.CreateNewProject())
                             onDismiss()
                         }
                     )
