@@ -2,7 +2,9 @@ package com.sherryyuan.wordy.repositories
 
 import com.sherryyuan.wordy.database.ProjectDao
 import com.sherryyuan.wordy.database.SelectedProjectDao
+import com.sherryyuan.wordy.entitymodels.Goal
 import com.sherryyuan.wordy.entitymodels.Project
+import com.sherryyuan.wordy.entitymodels.ProjectStatus
 import com.sherryyuan.wordy.entitymodels.SelectedProject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -26,6 +28,16 @@ class ProjectRepository @Inject constructor(
      */
     suspend fun insertProject(project: Project): Long {
         return projectDao.insertProject(project)
+    }
+
+    suspend fun updateProject(
+        id: Long,
+        title: String? = null,
+        description: String? = null,
+        goal: Goal? = null,
+        status: ProjectStatus? = null,
+    ) {
+        projectDao.updateProject(id, title, description, goal, status)
     }
 
     fun getSelectedProject(): Flow<Project?> {

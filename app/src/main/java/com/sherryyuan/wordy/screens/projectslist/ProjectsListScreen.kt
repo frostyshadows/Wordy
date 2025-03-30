@@ -99,7 +99,6 @@ fun SharedTransitionScope.ProjectsListScreen(
                         onClick = {
                             navController.navigate(WordyNavDestination.ProjectDetail(it.first.id))
                         },
-                        onEditButtonClick = {},
                     )
                 }
             }
@@ -134,7 +133,7 @@ private fun ProjectListTopAppBar(
                     contentDescription = stringResource(R.string.new_project_button),
                 )
             }
-        }
+        },
     )
 }
 
@@ -142,7 +141,6 @@ private fun ProjectListTopAppBar(
 private fun ProjectCard(
     projectWithWordCount: Pair<Project, Int>,
     onClick: () -> Unit,
-    onEditButtonClick: () -> Unit,
 ) {
     Card(
         modifier = Modifier
@@ -191,14 +189,6 @@ private fun ProjectCard(
                         )
                     }
                 }
-            }
-
-            IconButton(onClick = onEditButtonClick) {
-                Icon(
-                    modifier = Modifier.size(24.dp),
-                    imageVector = Icons.Outlined.Edit,
-                    contentDescription = stringResource(R.string.edit_label),
-                )
             }
         }
     }

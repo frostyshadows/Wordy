@@ -81,7 +81,7 @@ fun RootNavHost(
                 ProjectsListScreen(navController, topBarAnimatedVisibilityScope = this@composable)
             }
             composable<WordyNavDestination.ProjectDetail> {
-                ProjectDetailScreen()
+                ProjectDetailScreen(topBarAnimatedVisibilityScope = this@composable)
             }
         }
     }

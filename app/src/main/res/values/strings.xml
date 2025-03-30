@@ -8,6 +8,7 @@
     <string name="new_project_button">Create New Project</string>
     <string name="just_write_button">Just Write</string>
     <string name="switch_label">Switch projects</string>
+    <string name="in_progress_sheet_header">In progress projects</string>
 
     <string name="want_to_write_header">I want to write…</string>
     <string name="words_per_day">words per day</string>
@@ -50,6 +51,7 @@
     <string name="show_selected_project">Only show selected project</string>
 
     <string name="projects_label">Projects</string>
+    <string name="project_detail_status_label">Status: </string>
     <string name="in_progress_status_label">In progress</string>
     <string name="not_started_status_label">Not started</string>
     <string name="on_hold_status_label">On hold</string>
@@ -59,4 +61,6 @@
     <string name="deadline_goal_progress_template">Progress: %1$d%% (%2$d out of %3$d words)</string>
     <string name="deadline_goal_goal_template">Goal: %1$d words by %2$s</string>
     <string name="edit_label">Edit</string>
+    <string name="save_label">Save</string>
+    <string name="add_label">Add</string>
 </resources>
