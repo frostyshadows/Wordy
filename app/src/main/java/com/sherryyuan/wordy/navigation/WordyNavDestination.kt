@@ -12,12 +12,17 @@ sealed interface WordyNavDestination {
     data object Welcome : WordyNavDestination
 
     @Serializable
-    data object CreateNewProject :
-        WordyNavDestination // TODO also use for editing existing project?
+    data class CreateNewProject(
+        @SerialName(NAV_ARG_IS_ONBOARDING)
+        val isOnboarding: Boolean = false,
+    ) : WordyNavDestination
 
     // Default project for tracking a daily word count goal without a specific project.
     @Serializable
-    data object CreateDefaultProject : WordyNavDestination
+    data class CreateDefaultProject(
+        @SerialName(NAV_ARG_IS_ONBOARDING)
+        val isOnboarding: Boolean = false,
+    ) : WordyNavDestination
 
     @Serializable
     data object Entries : WordyNavDestination
@@ -35,6 +40,7 @@ sealed interface WordyNavDestination {
     ) : WordyNavDestination
 
     companion object {
+        const val NAV_ARG_IS_ONBOARDING = "nav_arg_is_onboarding"
         const val NAV_ARG_PROJECT_ID = "nav_arg_project_id"
     }
 }

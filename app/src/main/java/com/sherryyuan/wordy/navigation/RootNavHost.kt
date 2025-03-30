@@ -14,6 +14,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.sherryyuan.wordy.navigation.WordyNavDestination.Companion.NAV_ARG_IS_ONBOARDING
 import com.sherryyuan.wordy.screens.defaultproject.CreateDefaultProjectScreen
 import com.sherryyuan.wordy.screens.entries.EntriesScreen
 import com.sherryyuan.wordy.screens.home.HomeScreen
@@ -23,6 +24,7 @@ import com.sherryyuan.wordy.screens.onboarding.WelcomeScreen
 import com.sherryyuan.wordy.screens.projectdetail.ProjectDetailScreen
 import com.sherryyuan.wordy.screens.projectslist.ProjectsListScreen
 import com.sherryyuan.wordy.utils.TOP_BAR_ANIMATION_KEY
+import kotlinx.serialization.SerialName
 import kotlin.reflect.KType
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -44,10 +46,16 @@ fun RootNavHost(
                 WelcomeScreen(navController)
             }
             composable<WordyNavDestination.CreateNewProject> {
-                CreateNewProjectScreen(navController)
+                CreateNewProjectScreen(
+                    isOnboarding = it.arguments?.getBoolean(NAV_ARG_IS_ONBOARDING) ?: false,
+                    navController = navController,
+                )
             }
             composable<WordyNavDestination.CreateDefaultProject> {
-                CreateDefaultProjectScreen(navController)
+                CreateDefaultProjectScreen(
+                    isOnboarding = it.arguments?.getBoolean(NAV_ARG_IS_ONBOARDING) ?: false,
+                    navController = navController,
+                )
             }
             composable<WordyNavDestination.Entries> {
                 EntriesScreen(

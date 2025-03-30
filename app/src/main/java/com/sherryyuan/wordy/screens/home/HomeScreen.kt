@@ -55,6 +55,7 @@ import com.patrykandpatrick.vico.core.cartesian.decoration.HorizontalLine
 import com.sherryyuan.wordy.R
 import com.sherryyuan.wordy.ui.theme.VerticalSpacer
 import com.sherryyuan.wordy.ui.theme.WordyTheme
+import com.sherryyuan.wordy.ui.topAndSideContentPadding
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -75,7 +76,7 @@ fun HomeScreen(
                 LoadedHomeScreen(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(contentPadding)
+                        .topAndSideContentPadding(contentPadding)
                         .padding(24.dp),
                     viewState = state,
                     onWordCountInputChange = { viewModel.setWordCount(it) },
