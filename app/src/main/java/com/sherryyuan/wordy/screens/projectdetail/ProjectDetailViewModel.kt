@@ -29,6 +29,14 @@ class ProjectDetailViewModel @Inject constructor(
     // initialization order matters here since projectId is used in state creation
     val state: StateFlow<ProjectDetailViewState> = createProjectDetailState()
 
+    fun onTitleUpdate(title: String) {
+        projectId?.let {
+            viewModelScope.launch(Dispatchers.IO) {
+                projectRepository.updateProject(id = it, title = title)
+            }
+        }
+    }
+
     fun onStatusUpdate(status: ProjectStatus) {
         projectId?.let {
             viewModelScope.launch(Dispatchers.IO) {
