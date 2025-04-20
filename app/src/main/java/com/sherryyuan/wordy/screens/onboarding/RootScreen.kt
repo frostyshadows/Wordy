@@ -9,15 +9,11 @@ import kotlinx.coroutines.flow.first
 
 @Composable
 fun RootScreen(
-    navController: NavHostController,
+    onNavigateToLandingScreen: (WordyNavDestination) -> Unit,
     viewModel: RootScreenViewModel = hiltViewModel<RootScreenViewModel>(),
 ) {
     LaunchedEffect(Unit) {
         val landingScreen = viewModel.landingScreen.first()
-        navController.navigate(landingScreen) {
-            popUpTo(WordyNavDestination.Root) {
-                inclusive = true
-            }
-        }
+        onNavigateToLandingScreen(landingScreen)
     }
 }

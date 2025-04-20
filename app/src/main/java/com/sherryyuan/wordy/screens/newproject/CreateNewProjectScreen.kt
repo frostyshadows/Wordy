@@ -20,8 +20,7 @@ import com.sherryyuan.wordy.ui.topAndSideContentPadding
 
 @Composable
 fun CreateNewProjectScreen(
-    navController: NavHostController,
-    isOnboarding: Boolean = false,
+    onNavigateAfterSubmit: () -> Unit,
     viewModel: CreateNewProjectViewModel = hiltViewModel<CreateNewProjectViewModel>(),
 ) {
 
@@ -29,12 +28,7 @@ fun CreateNewProjectScreen(
 
     LaunchedEffect(viewState.state) {
         if (viewState.state == CreateNewProjectViewState.State.SUBMITTED) {
-            navController.navigate(WordyNavDestination.Home) {
-                popUpTo(if (isOnboarding) WordyNavDestination.Welcome else WordyNavDestination.CreateNewProject()) {
-                    inclusive = true
-                }
-                launchSingleTop = true
-            }
+            onNavigateAfterSubmit()
         }
     }
 

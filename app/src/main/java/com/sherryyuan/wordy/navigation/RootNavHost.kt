@@ -40,31 +40,65 @@ fun RootNavHost(
             startDestination = WordyNavDestination.Root,
         ) {
             composable<WordyNavDestination.Root> {
-                RootScreen(navController)
+                RootScreen(
+                    onNavigateToLandingScreen = {
+                        navController.navigate(it) {
+                            popUpTo(WordyNavDestination.Root) {
+                                inclusive = true
+                            }
+                        }
+                    }
+                )
             }
             composableWithDefaultTransitions<WordyNavDestination.Welcome> {
-                WelcomeScreen(navController)
+                WelcomeScreen(
+                    onNavigateToNewProject = {
+                        navController.navigate(
+                            WordyNavDestination.CreateNewProject(isOnboarding = true)
+                        )
+                    },
+                    onNavigateToDefaultProject = {
+                        navController.navigate(
+                            WordyNavDestination.CreateDefaultProject(isOnboarding = true)
+                        )
+                    }
+                )
             }
             composable<WordyNavDestination.CreateNewProject> {
                 CreateNewProjectScreen(
-                    isOnboarding = it.arguments?.getBoolean(NAV_ARG_IS_ONBOARDING) ?: false,
-                    navController = navController,
+                    onNavigateAfterSubmit = {
+                        val isOnboarding = it.arguments?.getBoolean(NAV_ARG_IS_ONBOARDING) == true
+                        navController.navigate(WordyNavDestination.Home) {
+                            popUpTo(if (isOnboarding) WordyNavDestination.Welcome else WordyNavDestination.CreateNewProject()) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
+                    }
                 )
             }
             composable<WordyNavDestination.CreateDefaultProject> {
                 CreateDefaultProjectScreen(
-                    isOnboarding = it.arguments?.getBoolean(NAV_ARG_IS_ONBOARDING) ?: false,
-                    navController = navController,
+                    onNavigateAfterSubmit = {
+                        val isOnboarding = it.arguments?.getBoolean(NAV_ARG_IS_ONBOARDING) == true
+                        navController.navigate(WordyNavDestination.Home) {
+                            popUpTo(if (isOnboarding) WordyNavDestination.Welcome else WordyNavDestination.CreateDefaultProject()) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
+                    }
                 )
             }
             composable<WordyNavDestination.Entries> {
                 EntriesScreen(
                     topBar = {
                         ProjectSwitcherTopAppBar(
-                            modifier = Modifier.sharedElement(
-                                state = rememberSharedContentState(key = TOP_BAR_ANIMATION_KEY),
-                                animatedVisibilityScope = this@composable,
-                            )
+                            modifier = Modifier
+                                .sharedElement(
+                                    state = rememberSharedContentState(key = TOP_BAR_ANIMATION_KEY),
+                                    animatedVisibilityScope = this@composable,
+                                )
                                 .skipToLookaheadSize(),
                             onProjectSwitcherClick = onProjectSwitcherClick,
                         )
@@ -75,10 +109,11 @@ fun RootNavHost(
                 HomeScreen(
                     topBar = {
                         ProjectSwitcherTopAppBar(
-                            modifier = Modifier.sharedElement(
-                                state = rememberSharedContentState(key = TOP_BAR_ANIMATION_KEY),
-                                animatedVisibilityScope = this@composableWithDefaultTransitions,
-                            )
+                            modifier = Modifier
+                                .sharedElement(
+                                    state = rememberSharedContentState(key = TOP_BAR_ANIMATION_KEY),
+                                    animatedVisibilityScope = this@composableWithDefaultTransitions,
+                                )
                                 .skipToLookaheadSize(),
                             onProjectSwitcherClick = onProjectSwitcherClick,
                         )
@@ -86,7 +121,15 @@ fun RootNavHost(
                 )
             }
             composable<WordyNavDestination.ProjectsList> {
-                ProjectsListScreen(navController, topBarAnimatedVisibilityScope = this@composable)
+                ProjectsListScreen(
+                    onNavigateToAddProject = {
+                        navController.navigate(WordyNavDestination.CreateNewProject())
+                    },
+                    onNavigateToProjectDetail = {
+                        navController.navigate(WordyNavDestination.ProjectDetail(it))
+                    },
+                    topBarAnimatedVisibilityScope = this@composable
+                )
             }
             composable<WordyNavDestination.ProjectDetail> {
                 ProjectDetailScreen(topBarAnimatedVisibilityScope = this@composable)

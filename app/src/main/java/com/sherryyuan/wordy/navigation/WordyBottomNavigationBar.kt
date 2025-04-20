@@ -1,15 +1,18 @@
 package com.sherryyuan.wordy.navigation
 
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import com.sherryyuan.wordy.R
@@ -23,16 +26,19 @@ fun WordyBottomNavigationBar(
 ) {
     val bottomNavScreens = remember {
         listOf(
-            BottomNavScreen(
+            BottomNavItem(
                 iconRes = R.drawable.list_icon,
+                labelRes = R.string.bottom_nav_entries_label,
                 defaultDestination = WordyNavDestination.Entries,
             ),
-            BottomNavScreen(
+            BottomNavItem(
                 iconRes = R.drawable.pen_icon,
+                labelRes = R.string.bottom_nav_home_label,
                 defaultDestination = WordyNavDestination.Home,
             ),
-            BottomNavScreen(
+            BottomNavItem(
                 iconRes = R.drawable.project_icon,
+                labelRes = R.string.bottom_nav_projects_label,
                 defaultDestination = WordyNavDestination.ProjectsList,
                 otherDestinationClassNames = listOf(WordyNavDestination.ProjectDetail::class.simpleName)
             ),
@@ -56,6 +62,9 @@ fun WordyBottomNavigationBar(
                             contentDescription = null,
                         )
                     },
+                    label = {
+                        Text(stringResource(screen.labelRes))
+                    },
                     selected = isOnDefaultDestination || isOnOtherDestination,
                     onClick = {
                         navController.navigate(screen.defaultDestination) {
@@ -69,8 +78,9 @@ fun WordyBottomNavigationBar(
     }
 }
 
-data class BottomNavScreen(
+data class BottomNavItem(
     @DrawableRes val iconRes: Int,
+    @StringRes val labelRes: Int,
     val defaultDestination: WordyNavDestination,
     val otherDestinationClassNames: List<String?> = emptyList(),
 )

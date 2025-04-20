@@ -24,17 +24,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import com.sherryyuan.wordy.R
-import com.sherryyuan.wordy.navigation.WordyNavDestination
-import com.sherryyuan.wordy.navigation.previewNavController
 import com.sherryyuan.wordy.ui.theme.WordyTheme
 import com.sherryyuan.wordy.ui.topAndSideContentPadding
 
 @Composable
 fun CreateDefaultProjectScreen(
-    navController: NavHostController,
-    isOnboarding: Boolean = false,
+    onNavigateAfterSubmit: () -> Unit,
     viewModel: CreateDefaultProjectViewModel = hiltViewModel<CreateDefaultProjectViewModel>(),
 ) {
     val viewState by viewModel.state.collectAsState()
@@ -42,12 +38,7 @@ fun CreateDefaultProjectScreen(
 
     LaunchedEffect(viewState.state) {
         if (viewState.state == CreateDefaultProjectViewState.State.SUBMITTED) {
-            navController.navigate(WordyNavDestination.Home) {
-                popUpTo(if (isOnboarding) WordyNavDestination.Welcome else WordyNavDestination.CreateDefaultProject()) {
-                    inclusive = true
-                }
-                launchSingleTop = true
-            }
+            onNavigateAfterSubmit()
         }
     }
 
@@ -95,6 +86,6 @@ fun CreateDefaultProjectScreen(
 @Composable
 private fun CreateDefaultProjectPreview() {
     WordyTheme {
-        CreateDefaultProjectScreen(navController = previewNavController())
+        CreateDefaultProjectScreen(onNavigateAfterSubmit = {})
     }
 }
