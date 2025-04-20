@@ -3,6 +3,10 @@
     <string name="confirm_label">Confirm</string>
     <string name="cancel_label">Cancel</string>
 
+    <string name="bottom_nav_entries_label">Entries</string>
+    <string name="bottom_nav_home_label">Home</string>
+    <string name="bottom_nav_projects_label">Projects</string>
+
     <string name="welcome_title">Welcome to Wordy!</string>
     <string name="welcome_message">Let\'s set a writing goal. Do you want to track a project, or track your daily word count without a project?</string>
     <string name="new_project_button">Create New Project</string>

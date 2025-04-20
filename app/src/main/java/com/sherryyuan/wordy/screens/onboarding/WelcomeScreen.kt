@@ -13,17 +13,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.sherryyuan.wordy.R
-import com.sherryyuan.wordy.navigation.WordyNavDestination
-import com.sherryyuan.wordy.navigation.previewNavController
 import com.sherryyuan.wordy.ui.theme.VerticalSpacer
 import com.sherryyuan.wordy.ui.theme.WordyTheme
 import com.sherryyuan.wordy.ui.topAndSideContentPadding
 
 @Composable
 fun WelcomeScreen(
-    navController: NavHostController,
+    onNavigateToNewProject: () -> Unit,
+    onNavigateToDefaultProject: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold { contentPadding ->
@@ -46,22 +44,14 @@ fun WelcomeScreen(
             VerticalSpacer()
             Button(
                 modifier = Modifier.fillMaxWidth(),
-                onClick = {
-                    navController.navigate(
-                        WordyNavDestination.CreateNewProject(isOnboarding = true)
-                    )
-                }
+                onClick = onNavigateToNewProject,
             ) {
                 Text(stringResource(R.string.new_project_button))
             }
             VerticalSpacer()
             Button(
                 modifier = Modifier.fillMaxWidth(),
-                onClick = {
-                    navController.navigate(
-                        WordyNavDestination.CreateDefaultProject(isOnboarding = true)
-                    )
-                }
+                onClick = onNavigateToDefaultProject,
             ) {
                 Text(stringResource(R.string.just_write_button))
             }
@@ -73,6 +63,9 @@ fun WelcomeScreen(
 @Composable
 private fun WelcomePreview() {
     WordyTheme {
-        WelcomeScreen(navController = previewNavController())
+        WelcomeScreen(
+            onNavigateToNewProject = {},
+            onNavigateToDefaultProject = {},
+        )
     }
 }

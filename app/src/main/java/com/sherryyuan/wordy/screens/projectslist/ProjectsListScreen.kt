@@ -35,11 +35,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.sherryyuan.wordy.R
 import com.sherryyuan.wordy.entitymodels.Goal
 import com.sherryyuan.wordy.entitymodels.Project
-import com.sherryyuan.wordy.navigation.WordyNavDestination
 import com.sherryyuan.wordy.ui.theme.VerticalSpacer
 import com.sherryyuan.wordy.ui.topAndSideContentPadding
 import com.sherryyuan.wordy.utils.TOP_BAR_ANIMATION_KEY
@@ -48,7 +46,8 @@ import com.sherryyuan.wordy.utils.toFormattedTimeString
 @OptIn(ExperimentalFoundationApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun SharedTransitionScope.ProjectsListScreen(
-    navController: NavController,
+    onNavigateToAddProject: () -> Unit,
+    onNavigateToProjectDetail: (id: Long) -> Unit,
     topBarAnimatedVisibilityScope: AnimatedVisibilityScope,
     viewModel: ProjectsListViewModel = hiltViewModel<ProjectsListViewModel>()
 ) {
@@ -62,7 +61,7 @@ fun SharedTransitionScope.ProjectsListScreen(
                         animatedVisibilityScope = topBarAnimatedVisibilityScope,
                     )
                     .skipToLookaheadSize(),
-                onAddProjectClick = { navController.navigate(WordyNavDestination.CreateNewProject()) }
+                onAddProjectClick = onNavigateToAddProject,
             )
         }
     ) { contentPadding ->
@@ -89,9 +88,7 @@ fun SharedTransitionScope.ProjectsListScreen(
                 ) {
                     ProjectCard(
                         projectWithWordCount = it,
-                        onClick = {
-                            navController.navigate(WordyNavDestination.ProjectDetail(it.first.id))
-                        },
+                        onClick = { onNavigateToProjectDetail(it.first.id) },
                     )
                 }
             }
