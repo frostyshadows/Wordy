@@ -8,7 +8,7 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.ToJson
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import java.util.Date
+import java.time.LocalDate
 
 
 class GoalTypeConverter {
@@ -22,27 +22,38 @@ class GoalTypeConverter {
         .add(KotlinJsonAdapterFactory())
         .build()
 
-    private val adapter: JsonAdapter<Goal> = moshi.adapter(Goal::class.java)
+    private val goalAdapter: JsonAdapter<Goal> = moshi.adapter(Goal::class.java)
+    private val dateAdapter: JsonAdapter<LocalDate> = moshi.adapter(LocalDate::class.java)
 
     @TypeConverter
     fun fromGoal(goal: Goal?): String? {
-        return goal?.let { adapter.toJson(it) }
+        return goal?.let { goalAdapter.toJson(it) }
     }
 
     @TypeConverter
     fun toGoal(json: String?): Goal? {
-        return json?.let { adapter.fromJson(it) }
+        return json?.let { goalAdapter.fromJson(it) }
+    }
+
+    @TypeConverter
+    fun fromLocalDate(date: LocalDate?): String? {
+        return date?.let { dateAdapter.toJson(it) }
+    }
+
+    @TypeConverter
+    fun toLocalDate(json: String?): LocalDate? {
+        return json?.let { dateAdapter.fromJson(it) }
     }
 }
 
 class DateJsonAdapter {
     @ToJson
-    fun toJson(date: Date): Long {
-        return date.time
+    fun toJson(date: LocalDate): String {
+        return date.toString()
     }
 
     @FromJson
-    fun fromJson(timestamp: Long): Date {
-        return Date(timestamp)
+    fun fromJson(dateString: String): LocalDate {
+        return LocalDate.parse(dateString)
     }
 }

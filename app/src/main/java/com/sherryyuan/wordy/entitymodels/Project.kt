@@ -2,8 +2,9 @@ package com.sherryyuan.wordy.entitymodels
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.sherryyuan.wordy.utils.getDaysBetween
+import com.sherryyuan.wordy.utils.projectDaysCount
 import com.squareup.moshi.JsonClass
+import java.time.LocalDate
 
 const val DEFAULT_JUST_WRITE_PROJECT_ID = 31415926L
 
@@ -38,24 +39,24 @@ sealed interface Goal {
     @JsonClass(generateAdapter = true)
     data class DeadlineGoal(
         val targetTotalWordCount: Int,
-        val startDateMillis: Long,
-        val targetEndDateMillis: Long,
+        val startDate: LocalDate,
+        val targetEndDate: LocalDate,
     ) : Goal {
         override val initialDailyWordCount: Int
             get() {
-                val days = getDaysBetween(startDateMillis, targetEndDateMillis)
-                return (targetTotalWordCount / days).toInt()
+                val days = projectDaysCount(startDate, targetEndDate)
+                return targetTotalWordCount / days
             }
 
         fun adjustedDailyWordCount(existingEntries: List<DailyEntry> = emptyList()): Int {
-            System.currentTimeMillis().coerceAtLeast(startDateMillis)
-            val remainingDays = getDaysBetween(
-                System.currentTimeMillis().coerceAtLeast(startDateMillis),
-                targetEndDateMillis,
+            val remainingDays = projectDaysCount(
+                startDate = LocalDate.now().coerceAtLeast(startDate),
+                endDate = targetEndDate,
             )
-            val existingWordCount = existingEntries.sumOf { it.wordCount }
+            val existingWordCount = existingEntries.filter { it.date < LocalDate.now() }
+                .sumOf { it.wordCount }
             val remainingWordCount = targetTotalWordCount - existingWordCount
-            return (remainingWordCount / remainingDays).toInt()
+            return remainingWordCount / remainingDays
         }
     }
 }

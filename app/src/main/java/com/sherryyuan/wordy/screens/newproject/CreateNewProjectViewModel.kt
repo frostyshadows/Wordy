@@ -5,9 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.sherryyuan.wordy.entitymodels.Goal
 import com.sherryyuan.wordy.entitymodels.Project
 import com.sherryyuan.wordy.entitymodels.ProjectStatus
+import com.sherryyuan.wordy.repositories.ProjectRepository
 import com.sherryyuan.wordy.screens.newproject.CreateNewProjectViewState.NewProjectGoal
 import com.sherryyuan.wordy.screens.newproject.CreateNewProjectViewState.State
-import com.sherryyuan.wordy.repositories.ProjectRepository
 import com.sherryyuan.wordy.utils.DIGITS_REGEX
 import com.sherryyuan.wordy.utils.MAX_WORD_COUNT_DIGITS
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
@@ -69,18 +70,18 @@ class CreateNewProjectViewModel @Inject constructor(
         }
     }
 
-    fun updateStartDate(input: Long) {
+    fun updateStartDate(input: LocalDate) {
         val currentGoal = goal.value as? NewProjectGoal.Deadline ?: return
-        val updatedGoal = currentGoal.copy(projectStartDateMillis = input)
+        val updatedGoal = currentGoal.copy(projectStartDate = input)
         goal.value = updatedGoal
     }
 
-    fun updateEndDate(input: Long) {
+    fun updateEndDate(input: LocalDate) {
         val currentGoal = goal.value as? NewProjectGoal.Deadline ?: return
-        if (input <= currentGoal.projectStartDateMillis) {
+        if (input <= currentGoal.projectStartDate) {
             return // TODO show warning
         }
-        val updatedGoal = currentGoal.copy(targetProjectEndDateMillis = input)
+        val updatedGoal = currentGoal.copy(targetProjectEndDate = input)
         goal.value = updatedGoal
     }
 
@@ -127,8 +128,8 @@ class CreateNewProjectViewModel @Inject constructor(
             description = descriptionInput.value,
             goal = Goal.DeadlineGoal(
                 targetTotalWordCount = goal.targetTotalWordCount.toInt(),
-                startDateMillis = goal.projectStartDateMillis,
-                targetEndDateMillis = goal.targetProjectEndDateMillis,
+                startDate = goal.projectStartDate,
+                targetEndDate = goal.targetProjectEndDate,
             ),
             status = ProjectStatus.IN_PROGRESS,
         )

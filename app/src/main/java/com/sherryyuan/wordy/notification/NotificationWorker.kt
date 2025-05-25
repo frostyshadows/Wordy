@@ -75,15 +75,15 @@ class NotificationWorker @AssistedInject constructor(
             entryRepository.getEntries(),
             notificationConfig.showRemoteInputWarningFlow,
         ) { selectedProject, entries, showRemoteInputWarning ->
-            val wordCount = entries
+            val selectedProjectEntries = entries.filter { it.projectId == selectedProject?.id }
+            val wordCount = selectedProjectEntries
                 .fromPastDays(1)
-                .filter { it.projectId == selectedProject?.id }
                 .sumOf { it.wordCount }
             if (selectedProject == null) return@combine
 
             val wordCountGoal = when (val goal = selectedProject.goal) {
                 is Goal.DailyWordCountGoal -> goal.initialDailyWordCount
-                is Goal.DeadlineGoal -> goal.adjustedDailyWordCount(entries)
+                is Goal.DeadlineGoal -> goal.adjustedDailyWordCount(selectedProjectEntries)
             }
             val title = buildString {
                 append(

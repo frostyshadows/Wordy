@@ -22,8 +22,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.util.Calendar
-import java.util.concurrent.TimeUnit
+import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
@@ -66,7 +65,7 @@ class HomeViewModel @Inject constructor(
                 .first()
             if (selectedProject != null) {
                 entryRepository.insertEntry(
-                    timestamp = System.currentTimeMillis(),
+                    date = LocalDate.now(),
                     wordCount = entryWordCount,
                     projectId = selectedProject.id,
                     updateWordCountStrategy = EntryRepository.UpdateWordCountStrategy.ADD,
@@ -91,28 +90,34 @@ class HomeViewModel @Inject constructor(
             val wordsToday = selectedProjectEntries
                 .fromPastDays(1)
                 .sumOf { it.wordCount }
-            val dailyWordCountGoal = selectedProject?.goal?.initialDailyWordCount ?: 0
-            val chartWordCounts: Map<Long, Int> = when (displayedChartRange.value) {
+            val dailyWordCountGoal = when (val goal = selectedProject?.goal) {
+                is Goal.DailyWordCountGoal -> goal.initialDailyWordCount
+                is Goal.DeadlineGoal ->
+                    goal.adjustedDailyWordCount(selectedProjectEntries)
+
+                null -> 0
+            }
+            val chartWordCounts: Map<LocalDate, Int> = when (displayedChartRange.value) {
                 WEEK ->
                     selectedProjectEntries.fromPastDays(7)
-                        .associate { it.timestamp to it.wordCount }
+                        .associate { it.date to it.wordCount }
 
                 MONTH ->
                     selectedProjectEntries.fromPastDays(30)
-                        .associate { it.timestamp to it.wordCount }
+                        .associate { it.date to it.wordCount }
 
                 ALL_TIME -> TODO()
                 PROJECT_WITH_DEADLINE -> {
-                    val existingEntriesTimestamps = selectedProjectEntries.map { it.timestamp }
+                    val existingEntriesDates = selectedProjectEntries.map { it.date }
                     val existingEntriesCumulativeWordCounts = selectedProjectEntries.map {
                         it.wordCount
                     }.runningReduce { sum, count ->
                         sum + count
                     }
-                    val existingEntries = existingEntriesTimestamps
+                    val existingEntries = existingEntriesDates
                         .zip(existingEntriesCumulativeWordCounts)
                         .toMap()
-                    val futureEntries = mapOf<Long, Int>() // TODO
+                    val futureEntries = mapOf<LocalDate, Int>() // TODO
                     existingEntries + futureEntries
                 }
             }
@@ -130,18 +135,20 @@ class HomeViewModel @Inject constructor(
 
     // populate a few random entries for testing
     private suspend fun populateDailyEntries(projectId: Long) {
-        val calendar = Calendar.getInstance()
+        val now = LocalDate.now()
         listOf(
-            (calendar.timeInMillis - TimeUnit.DAYS.toMillis(20)) to 300,
-            (calendar.timeInMillis - TimeUnit.DAYS.toMillis(18)) to 500,
-            (calendar.timeInMillis - TimeUnit.DAYS.toMillis(13)) to 1,
-            (calendar.timeInMillis - TimeUnit.DAYS.toMillis(10)) to 1201,
-            (calendar.timeInMillis - TimeUnit.DAYS.toMillis(5)) to 1500,
-            (calendar.timeInMillis - TimeUnit.DAYS.toMillis(2)) to 600,
-
-            ).forEach { (timestamp, wordCount) ->
+            now.minusDays(33) to 300,
+            now.minusDays(31) to 500,
+            now.minusDays(13) to 1,
+            now.minusDays(10) to 1201,
+            now.minusDays(9) to 501,
+            now.minusDays(8) to 501,
+            now.minusDays(7) to 50,
+            now.minusDays(5) to 1500,
+            now.minusDays(2) to 600,
+        ).forEach { (date, wordCount) ->
             entryRepository.insertEntry(
-                timestamp = timestamp,
+                date = date,
                 wordCount = wordCount,
                 projectId = projectId,
                 updateWordCountStrategy = EntryRepository.UpdateWordCountStrategy.REPLACE,
