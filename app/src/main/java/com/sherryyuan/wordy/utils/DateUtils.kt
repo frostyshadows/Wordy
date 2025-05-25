@@ -1,16 +1,20 @@
 package com.sherryyuan.wordy.utils
 
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-import java.util.concurrent.TimeUnit
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 
-fun getDaysBetween(startDateTimestamp: Long, endDateTimestamp: Long): Long {
-    val diffInMillis = endDateTimestamp - startDateTimestamp
-    return TimeUnit.DAYS.convert(diffInMillis, TimeUnit.MILLISECONDS)
-}
+// start and end dates are inclusive
+fun projectDaysCount(
+    startDate: LocalDate,
+    endDate: LocalDate,
+): Int = ChronoUnit.DAYS.between(startDate, endDate).toInt() + 1
 
-fun Long.toFormattedTimeString(pattern: String): String {
-    val formatter = SimpleDateFormat(pattern, Locale.getDefault())
-    return formatter.format(Date(this))
-}
+fun Long.toLocalDate(): LocalDate = Instant.ofEpochMilli(this)
+    .atZone(ZoneId.systemDefault())
+    .toLocalDate()
+
+fun LocalDate.toEpochMillis(): Long = atStartOfDay(ZoneId.systemDefault())
+    .toInstant()
+    .toEpochMilli()

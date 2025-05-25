@@ -22,14 +22,14 @@ sealed class EntriesViewState(
 
     data class CalendarEntries(
         val dailyWordCountGoal: Int,
-        val dailyEntries: List<DailyCalendarEntries>,
+        val dailyEntries: List<DailyCalendarEntry>,
         override val startYearMonth: YearMonth,
     ) : EntriesViewState(startYearMonth) {
 
-        data class DailyCalendarEntries(
+        data class DailyCalendarEntry(
             val date: LocalDate,
-            val progress: CalendarEntriesProgress,
-            val entries: List<DailyEntry>,
+            val entry: DailyEntry,
+            val progress: CalendarEntryProgress,
         )
     }
 
@@ -40,11 +40,11 @@ sealed class EntriesViewState(
         val projectTitle: String,
     )
 
-    sealed interface CalendarEntriesProgress {
-        data object GoalAchieved : CalendarEntriesProgress
-        data object GoalAchievedStreakStart : CalendarEntriesProgress
-        data object GoalAchievedStreakMiddle : CalendarEntriesProgress
-        data object GoalAchievedStreakEnd : CalendarEntriesProgress
-        data class GoalProgress(val percentAchieved: Float) : CalendarEntriesProgress
+    sealed interface CalendarEntryProgress {
+        data object GoalAchieved : CalendarEntryProgress
+        data object GoalAchievedStreakStart : CalendarEntryProgress
+        data object GoalAchievedStreakMiddle : CalendarEntryProgress
+        data object GoalAchievedStreakEnd : CalendarEntryProgress
+        data class GoalProgress(val percentAchieved: Float) : CalendarEntryProgress
     }
 }

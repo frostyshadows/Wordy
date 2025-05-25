@@ -3,11 +3,7 @@ package com.sherryyuan.wordy.repositories
 import com.sherryyuan.wordy.database.DailyEntryDao
 import com.sherryyuan.wordy.entitymodels.DailyEntry
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
-import java.time.Instant
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.ZoneId
 import javax.inject.Inject
 
 class EntryRepository @Inject constructor(private val dailyEntryDao: DailyEntryDao) {
@@ -15,17 +11,16 @@ class EntryRepository @Inject constructor(private val dailyEntryDao: DailyEntryD
     // Add an entry for the given day if one doesn't already exist.
     // Otherwise add or replace wordCount to the existing entry.
     suspend fun insertEntry(
-        timestamp: Long,
+        date: LocalDate,
         wordCount: Int,
         projectId: Long,
         updateWordCountStrategy: UpdateWordCountStrategy,
     ) {
-        val startOfDayTimestamp = getStartOfDayTimestamp(timestamp)
-        val entryForDay = dailyEntryDao.getEntryForTimestamp(startOfDayTimestamp)
+        val entryForDay = dailyEntryDao.getEntryForDate(date)
         if (entryForDay == null) {
             dailyEntryDao.insertEntry(
                 DailyEntry(
-                    timestamp = startOfDayTimestamp,
+                    date = date,
                     wordCount = wordCount,
                     projectId = projectId,
                 )
@@ -37,7 +32,7 @@ class EntryRepository @Inject constructor(private val dailyEntryDao: DailyEntryD
             }
             dailyEntryDao.updateEntry(
                 entryId = entryForDay.id,
-                timestamp = startOfDayTimestamp,
+                date = date,
                 wordCount = updatedWordCount,
                 projectId = projectId,
             )
@@ -47,13 +42,6 @@ class EntryRepository @Inject constructor(private val dailyEntryDao: DailyEntryD
     fun getEntries(): Flow<List<DailyEntry>> {
         return dailyEntryDao.getAll()
     }
-
-    private fun getStartOfDayTimestamp(timeStamp: Long): Long =
-        LocalDateTime.ofInstant(Instant.ofEpochMilli(timeStamp), ZoneId.systemDefault())
-            .toLocalDate()
-            .atStartOfDay(ZoneId.systemDefault())
-            .toInstant()
-            .toEpochMilli()
 
     enum class UpdateWordCountStrategy {
         ADD,

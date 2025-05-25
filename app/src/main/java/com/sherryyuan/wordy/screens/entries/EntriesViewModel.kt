@@ -1,26 +1,24 @@
 package com.sherryyuan.wordy.screens.entries
 
-import android.icu.text.SimpleDateFormat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kizitonwose.calendar.core.yearMonth
 import com.sherryyuan.wordy.entitymodels.DailyEntry
 import com.sherryyuan.wordy.entitymodels.Project
-import com.sherryyuan.wordy.screens.entries.EntriesViewState.CalendarEntries.DailyCalendarEntries
-import com.sherryyuan.wordy.screens.entries.EntriesViewState.CalendarEntriesProgress
-import com.sherryyuan.wordy.screens.entries.EntriesViewState.ListEntries
 import com.sherryyuan.wordy.repositories.EntryRepository
 import com.sherryyuan.wordy.repositories.ProjectRepository
+import com.sherryyuan.wordy.screens.entries.EntriesViewState.CalendarEntries.DailyCalendarEntry
+import com.sherryyuan.wordy.screens.entries.EntriesViewState.CalendarEntryProgress
+import com.sherryyuan.wordy.screens.entries.EntriesViewState.ListEntries
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
-import java.time.Instant
+import java.time.LocalDate
 import java.time.YearMonth
-import java.time.ZoneId
-import java.util.Date
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 import javax.inject.Inject
 
@@ -30,8 +28,8 @@ class EntriesViewModel @Inject constructor(
     private val entryRepository: EntryRepository,
 ) : ViewModel() {
 
-    private val monthFormatter = SimpleDateFormat("MMMM yyyy", Locale.getDefault())
-    private val dayFormatter = SimpleDateFormat("MMM d", Locale.getDefault())
+    private val monthFormatter = DateTimeFormatter.ofPattern("MMMM yyyy", Locale.getDefault())
+    private val dayFormatter = DateTimeFormatter.ofPattern("MMM d", Locale.getDefault())
 
     private val selectedViewMode = MutableStateFlow(EntriesViewMode.LIST)
     private val showCurrentProjectOnly = MutableStateFlow(false)
@@ -91,30 +89,30 @@ class EntriesViewModel @Inject constructor(
         selectedProject: Project?,
         showCurrentProjectOnly: Boolean,
     ): ListEntries {
-        val groupedByMonth = if (showCurrentProjectOnly) {
+        val groupedByYearMonth = if (showCurrentProjectOnly) {
             filter { selectedProject?.id == it.projectId }
         } else {
             this
-        }.groupBy { entry ->
-            monthFormatter.format(Date(entry.timestamp))
         }
+            .sortedByDescending { it.date }
+            .groupBy { it.date.yearMonth }
 
-        val monthlyEntries = groupedByMonth.map { (monthText, entries) ->
+        val monthlyEntries = groupedByYearMonth.map { (yearMonth, entries) ->
             val dailyEntries = entries
-                .sortedByDescending { it.timestamp }
                 .map { entry ->
-                    val dateText = dayFormatter.format(Date(entry.timestamp))
                     val projectTitle =
                         projects.firstOrNull { it.id == entry.projectId }?.title.orEmpty()
-                    EntriesViewState.DailyEntry(dateText, entry.wordCount, projectTitle)
+                    EntriesViewState.DailyEntry(
+                        entry.date.format(dayFormatter),
+                        entry.wordCount,
+                        projectTitle,
+                    )
                 }
 
             ListEntries.MonthlyListEntries(
-                monthHeaderText = monthText,
+                monthHeaderText =  yearMonth.format(monthFormatter),
                 dailyEntries = dailyEntries,
             )
-        }.sortedByDescending { monthly ->
-            monthFormatter.parse(monthly.monthHeaderText).time
         }
         return ListEntries(
             isShowCurrentOnlyToggleVisible = isNotEmpty() && projects.size > 1,
@@ -128,60 +126,55 @@ class EntriesViewModel @Inject constructor(
         projects: List<Project>,
         selectedProject: Project?,
     ): EntriesViewState.CalendarEntries {
-        val groupedEntries = groupBy { entry ->
-            Instant.ofEpochMilli(entry.timestamp).atZone(ZoneId.systemDefault()).toLocalDate()
-        }
-
-        val dailyEntriesWithoutProgress = groupedEntries.map { (date, entriesForDate) ->
-            DailyCalendarEntries(
-                date = date,
-                progress = CalendarEntriesProgress.GoalAchieved,
-                entries = entriesForDate.map { entry ->
-                    EntriesViewState.DailyEntry(
-                        dateText = dayFormatter.format(Date(entry.timestamp)),
-                        wordCount = entry.wordCount,
-                        projectTitle = projects.firstOrNull { it.id == entry.projectId }?.title.orEmpty()
-                    )
-                }
-            )
-        }
-        val dailyEntriesWithProgress =
-            dailyEntriesWithoutProgress.mapIndexed { index, dailyCalendarEntries ->
+        val sortedDailyEntries = sortedBy { it.date }
+        val calendarDailyEntries = sortedDailyEntries.mapIndexed { index, dailyEntry ->
                 val wordCountGoal = selectedProject?.goal?.initialDailyWordCount ?: 0
-                val wordsCurrentDay = dailyCalendarEntries.entries.sumOf { it.wordCount }
-                val previousDayEntries = dailyEntriesWithoutProgress.getOrNull(index - 1)
-                val wordsPreviousDay = previousDayEntries?.entries?.sumOf { it.wordCount } ?: 0
-                val nextDayEntries = dailyEntriesWithoutProgress.getOrNull(index + 1)
-                val wordsNextDay = nextDayEntries?.entries?.sumOf { it.wordCount } ?: 0
+                val wordsCurrentDay = dailyEntry.wordCount
+                val previousDayEntry = sortedDailyEntries.getOrNull(index - 1)
+                    ?.takeIf {
+                        it.date == dailyEntry.date.minusDays(1)
+                    }
+                val wordsPreviousDay = previousDayEntry?.wordCount ?: 0
+                val nextDayEntry = sortedDailyEntries.getOrNull(index + 1)
+                    ?.takeIf {
+                        it.date == dailyEntry.date.plusDays(1)
+                    }
+                val wordsNextDay = nextDayEntry?.wordCount ?: 0
 
                 val isGoalAchievedCurrentDay = wordsCurrentDay >= wordCountGoal
                 val isGoalAchievedPreviousDay = wordsPreviousDay >= wordCountGoal
                 val isGoalAchievedNextDay = wordsNextDay >= wordCountGoal
                 val progress = when {
-                    !isGoalAchievedCurrentDay -> CalendarEntriesProgress.GoalProgress(
+                    !isGoalAchievedCurrentDay -> CalendarEntryProgress.GoalProgress(
                         wordsCurrentDay.toFloat() / wordCountGoal
                     )
 
-                    isGoalAchievedCurrentDay && isGoalAchievedPreviousDay && isGoalAchievedNextDay -> CalendarEntriesProgress.GoalAchievedStreakMiddle
-                    isGoalAchievedCurrentDay && isGoalAchievedPreviousDay -> CalendarEntriesProgress.GoalAchievedStreakEnd
-                    isGoalAchievedCurrentDay && isGoalAchievedNextDay -> CalendarEntriesProgress.GoalAchievedStreakStart
-                    else -> CalendarEntriesProgress.GoalAchieved
+                    isGoalAchievedCurrentDay && isGoalAchievedPreviousDay && isGoalAchievedNextDay -> CalendarEntryProgress.GoalAchievedStreakMiddle
+                    isGoalAchievedCurrentDay && isGoalAchievedPreviousDay -> CalendarEntryProgress.GoalAchievedStreakEnd
+                    isGoalAchievedCurrentDay && isGoalAchievedNextDay -> CalendarEntryProgress.GoalAchievedStreakStart
+                    else -> CalendarEntryProgress.GoalAchieved
                 }
-                dailyCalendarEntries.copy(progress = progress)
+                DailyCalendarEntry(
+                    date = dailyEntry.date,
+                    progress = progress,
+                    entry = EntriesViewState.DailyEntry(
+                        dateText = dailyEntry.date.format(dayFormatter),
+                        wordCount = dailyEntry.wordCount,
+                        projectTitle = projects.firstOrNull { it.id == dailyEntry.projectId }?.title.orEmpty(),
+                    ),
+                )
             }
 
         return EntriesViewState.CalendarEntries(
             dailyWordCountGoal = selectedProject?.goal?.initialDailyWordCount ?: 0,
             startYearMonth = earliestYearMonth(),
-            dailyEntries = dailyEntriesWithProgress,
+            dailyEntries = calendarDailyEntries,
         )
     }
 
     private fun List<DailyEntry>.earliestYearMonth(): YearMonth {
-        val earliestTimestamp = minOfOrNull { it.timestamp } ?: System.currentTimeMillis()
-        val earliestLocalDate =
-            Instant.ofEpochMilli(earliestTimestamp).atZone(ZoneId.systemDefault()).toLocalDate()
-        return earliestLocalDate.yearMonth
+        val earliestDate = minOfOrNull { it.date } ?: LocalDate.now()
+        return earliestDate.yearMonth
     }
 
     enum class EntriesViewMode {

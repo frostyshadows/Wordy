@@ -1,7 +1,7 @@
 package com.sherryyuan.wordy.screens.newproject
 
-import com.sherryyuan.wordy.utils.getDaysBetween
-import java.util.Calendar
+import com.sherryyuan.wordy.utils.projectDaysCount
+import java.time.LocalDate
 
 data class CreateNewProjectViewState(
     val title: String = "",
@@ -22,18 +22,14 @@ data class CreateNewProjectViewState(
 
         data class Deadline(
             val targetTotalWordCount: String = "50000",
-            val projectStartDateMillis: Long = Calendar.getInstance().timeInMillis,
-            val targetProjectEndDateMillis: Long = Calendar.getInstance().apply {
-                add(Calendar.MONTH, 3)
-            }.timeInMillis,
+            val projectStartDate: LocalDate = LocalDate.now(),
+            val targetProjectEndDate: LocalDate = LocalDate.now().plusMonths(3L),
         ) : NewProjectGoal {
             override val saveButtonEnabled = targetTotalWordCount.isNotBlank()
             val dailyWordCount: Int
                 get() {
-                    // TODO handle case where start date is in wrong time zone (eg. select tomorrow but get 0 as days between when it should be 1)
-                    // start and end dates are inclusive
-                    val days = getDaysBetween(projectStartDateMillis, targetProjectEndDateMillis) + 1
-                    return (targetTotalWordCount.toInt() / days).toInt()
+                    val days = projectDaysCount(projectStartDate, targetProjectEndDate)
+                    return targetTotalWordCount.toInt() / days
                 }
         }
     }

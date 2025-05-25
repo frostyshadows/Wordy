@@ -41,7 +41,6 @@ import com.sherryyuan.wordy.entitymodels.Project
 import com.sherryyuan.wordy.ui.theme.VerticalSpacer
 import com.sherryyuan.wordy.ui.topAndSideContentPadding
 import com.sherryyuan.wordy.utils.TOP_BAR_ANIMATION_KEY
-import com.sherryyuan.wordy.utils.toFormattedTimeString
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
@@ -155,7 +154,12 @@ private fun ProjectCard(
                             text = stringResource(R.string.daily_goal_progress_template, wordCount),
                             color = MaterialTheme.colorScheme.secondary,
                         )
-                        Text(stringResource(R.string.daily_goal_goal_template, goal.initialDailyWordCount))
+                        Text(
+                            stringResource(
+                                R.string.daily_goal_goal_template,
+                                goal.initialDailyWordCount
+                            )
+                        )
                     }
 
                     is Goal.DeadlineGoal -> {
@@ -168,13 +172,11 @@ private fun ProjectCard(
                                 goal.targetTotalWordCount,
                             )
                         )
-                        val targetDate =
-                            goal.targetEndDateMillis.toFormattedTimeString("MMM d, yyyy")
                         Text(
                             stringResource(
                                 R.string.deadline_goal_goal_template,
                                 goal.targetTotalWordCount,
-                                targetDate,
+                                goal.targetEndDate.toString(),
                             )
                         )
                     }

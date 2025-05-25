@@ -15,6 +15,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -43,7 +44,7 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
                     notificationConfig.showRemoteInputWarningFlow.emit(wordCount == null)
                     if (selectedProject != null && wordCount != null) {
                         entryRepository.insertEntry(
-                            timestamp = System.currentTimeMillis(),
+                            date = LocalDate.now(),
                             wordCount = wordCount,
                             projectId = selectedProject.id,
                             updateWordCountStrategy = EntryRepository.UpdateWordCountStrategy.ADD,
@@ -62,7 +63,7 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
                     notificationConfig.showRemoteInputWarningFlow.emit(wordCount == null)
                     if (selectedProject != null && wordCount != null) {
                         entryRepository.insertEntry(
-                            timestamp = System.currentTimeMillis(),
+                            date = LocalDate.now(),
                             wordCount = wordCount,
                             projectId = selectedProject.id,
                             updateWordCountStrategy = EntryRepository.UpdateWordCountStrategy.REPLACE,

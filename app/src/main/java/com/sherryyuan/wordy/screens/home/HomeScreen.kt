@@ -57,6 +57,7 @@ import com.sherryyuan.wordy.ui.theme.VerticalSpacer
 import com.sherryyuan.wordy.ui.theme.WordyTheme
 import com.sherryyuan.wordy.ui.topAndSideContentPadding
 import java.time.Instant
+import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
@@ -180,7 +181,7 @@ private fun WordCountInput(
 
 @Composable
 private fun DailyWordCountChart(
-    wordCounts: Map<Long, Int>,
+    wordCounts: Map<LocalDate, Int>,
     wordCountGoal: Int,
 ) {
     val modelProducer = remember { CartesianChartModelProducer() }
@@ -190,7 +191,7 @@ private fun DailyWordCountChart(
     val xAxisDates = rememberXAxisDates(wordCounts.keys.toList())
     LaunchedEffect(Unit) {
         modelProducer.runTransaction {
-            columnSeries { series(wordCounts.keys, wordCounts.values) }
+            columnSeries { series(wordCounts.values) }
         }
     }
 
@@ -223,7 +224,7 @@ private fun DailyWordCountChart(
 
 @Composable
 private fun CumulativeWordCountChart(
-    wordCounts: Map<Long, Int>,
+    wordCounts: Map<LocalDate, Int>,
     wordCountGoal: Int,
 ) {
     val modelProducer = remember { CartesianChartModelProducer() }
@@ -260,13 +261,13 @@ private fun CumulativeWordCountChart(
 }
 
 @Composable
-private fun rememberXAxisDates(timestamps: List<Long>): List<String> {
+private fun rememberXAxisDates(dates: List<LocalDate>): List<String> {
     val dateTimeFormatter = DateTimeFormatter
         .ofPattern("MMM d")
         .withZone(ZoneId.systemDefault())
     return remember {
-        timestamps.map {
-            dateTimeFormatter.format(Instant.ofEpochMilli(it))
+        dates.map {
+            dateTimeFormatter.format(it)
         }
     }
 }

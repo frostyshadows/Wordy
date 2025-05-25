@@ -1,5 +1,7 @@
 package com.sherryyuan.wordy.screens.home
 
+import java.time.LocalDate
+
 sealed interface HomeViewState {
     data object Loading : HomeViewState
 
@@ -10,7 +12,7 @@ sealed interface HomeViewState {
         val wordsToday: Int,
         val dailyWordCountGoal: Int,
         val selectedDisplayedChartRange: DisplayedChartRange,
-        val chartWordCounts: Map<Long, Int>, // date timestamp to word count
+        val chartWordCounts: Map<LocalDate, Int>,
     ) : HomeViewState
 
     enum class DisplayedChartRange {

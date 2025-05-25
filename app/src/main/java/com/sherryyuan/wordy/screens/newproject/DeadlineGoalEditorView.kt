@@ -24,7 +24,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -39,22 +38,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.sherryyuan.wordy.R
-import com.sherryyuan.wordy.entitymodels.Goal
 import com.sherryyuan.wordy.screens.newproject.CreateNewProjectViewState.NewProjectGoal
 import com.sherryyuan.wordy.ui.theme.VerticalSpacer
-import com.sherryyuan.wordy.utils.toFormattedTimeString
-import java.text.SimpleDateFormat
+import com.sherryyuan.wordy.utils.toEpochMillis
+import com.sherryyuan.wordy.utils.toLocalDate
+import java.time.LocalDate
 import java.util.Calendar
-import java.util.Date
-import java.util.Locale
 import java.util.TimeZone
 
 @Composable
 fun ColumnScope.DeadlineGoalEditor(
     viewState: CreateNewProjectViewState,
     onWordCountChange: (String) -> Unit,
-    onStartDateChange: (Long) -> Unit,
-    onEndDateChange: (Long) -> Unit,
+    onStartDateChange: (LocalDate) -> Unit,
+    onEndDateChange: (LocalDate) -> Unit,
     onSubmitClick: () -> Unit,
 ) {
     var modalMessage: String? by remember { mutableStateOf(null) }
@@ -84,13 +81,14 @@ fun ColumnScope.DeadlineGoalEditor(
     val startDateWarning = stringResource(R.string.start_date_warning)
     StartDatePickerRow(
         goal = goal,
-        onDateSelected = { startDate ->
-            if (startDate < goal.targetProjectEndDateMillis) {
+        onDateSelected = { startDateMillis ->
+            val startDate = startDateMillis.toLocalDate()
+            if (startDate < goal.targetProjectEndDate) {
                 onStartDateChange(startDate)
             } else {
                 modalMessage = startDateWarning
             }
-            startDate < goal.targetProjectEndDateMillis
+            startDate < goal.targetProjectEndDate
         },
     )
 
@@ -99,13 +97,14 @@ fun ColumnScope.DeadlineGoalEditor(
     val endDateWarning = stringResource(R.string.end_date_warning)
     EndDatePickerRow(
         goal = goal,
-        onDateSelected = { endDate ->
-            if (endDate > goal.projectStartDateMillis) {
+        onDateSelected = { endDateMillis ->
+            val endDate = endDateMillis.toLocalDate()
+            if (endDate > goal.projectStartDate) {
                 onEndDateChange(endDate)
             } else {
                 modalMessage = endDateWarning
             }
-            endDate > goal.projectStartDateMillis
+            endDate > goal.projectStartDate
         },
     )
 
@@ -152,7 +151,7 @@ private fun StartDatePickerRow(
         )
         DatePickerInputField(
             modifier = Modifier.weight(2f),
-            initialDateMillis = goal.projectStartDateMillis,
+            initialDate = goal.projectStartDate,
             onDateSelected = onDateSelected,
         )
     }
@@ -172,7 +171,7 @@ private fun EndDatePickerRow(
         )
         DatePickerInputField(
             modifier = Modifier.weight(2f),
-            initialDateMillis = goal.targetProjectEndDateMillis,
+            initialDate = goal.targetProjectEndDate,
             onDateSelected = onDateSelected,
         )
     }
@@ -181,22 +180,22 @@ private fun EndDatePickerRow(
 @Composable
 private fun DatePickerInputField(
     modifier: Modifier = Modifier,
-    initialDateMillis: Long,
+    initialDate: LocalDate,
     onDateSelected: (Long) -> Boolean, // return true if selected date is valid
 ) {
-    var selectedDateMillis by remember { mutableLongStateOf(initialDateMillis) }
+    var selectedDate by remember { mutableStateOf(initialDate) }
     var showModal by remember { mutableStateOf(false) }
 
     TextField(
-        value = selectedDateMillis.toFormattedTimeString("MM/dd/yyyy"),
+        value = selectedDate.toString(),
         onValueChange = { },
-        placeholder = { selectedDateMillis.toFormattedTimeString("MM/dd/yyyy") },
+        placeholder = { selectedDate.toString() },
         trailingIcon = {
             Icon(Icons.Default.DateRange, contentDescription = "Select date")
         },
         modifier = modifier
             .fillMaxWidth()
-            .pointerInput(selectedDateMillis) {
+            .pointerInput(selectedDate) {
                 awaitEachGesture {
                     // Modifier.clickable doesn't work for text fields, so we use Modifier.pointerInput
                     // in the Initial pass to observe events before the text field consumes them
@@ -212,14 +211,14 @@ private fun DatePickerInputField(
 
     if (showModal) {
         DatePickerModal(
-            initialSelectedDateMillis = selectedDateMillis + TimeZone.getDefault().rawOffset,
+            initialSelectedDateMillis = selectedDate.toEpochMillis(),
             onDateSelected = { date ->
                 date?.let {
                     // date picker gives date in GMT time zone
-                    val newSelectedDate = it - TimeZone.getDefault().rawOffset
-                    val shouldUpdateSelection = onDateSelected(newSelectedDate)
+                    val selectedDateMillis = it - TimeZone.getDefault().rawOffset
+                    val shouldUpdateSelection = onDateSelected(selectedDateMillis)
                     if (shouldUpdateSelection) {
-                        selectedDateMillis = newSelectedDate
+                        selectedDate = selectedDateMillis.toLocalDate()
                     }
                 }
             },

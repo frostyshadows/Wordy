@@ -45,7 +45,7 @@ import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.nextMonth
 import com.kizitonwose.calendar.core.previousMonth
 import com.sherryyuan.wordy.R
-import com.sherryyuan.wordy.screens.entries.EntriesViewState.CalendarEntriesProgress
+import com.sherryyuan.wordy.screens.entries.EntriesViewState.CalendarEntryProgress
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -89,19 +89,19 @@ fun CalendarEntries(
             MonthHeader(daysOfWeek = daysOfWeek)
         },
         dayContent = { day ->
-            val dayEntries = entriesState.dailyEntries.firstOrNull {
+            val dayEntry = entriesState.dailyEntries.firstOrNull {
                 it.date == day.date
             }
             val isSelected = selectedDay == day
             DayContent(
                 calendarDay = day,
-                entries = dayEntries,
+                entry = dayEntry,
                 isSelected = isSelected,
                 onClick = {
-                    if (!isSelected) {
-                        selectedDay = day
+                    selectedDay = if (!isSelected) {
+                        day
                     } else {
-                        selectedDay = null
+                        null
                     }
                 }
             )
@@ -176,7 +176,7 @@ private fun MonthHeader(daysOfWeek: List<DayOfWeek>) {
 @Composable
 private fun DayContent(
     calendarDay: CalendarDay,
-    entries: EntriesViewState.CalendarEntries.DailyCalendarEntries?,
+    entry: EntriesViewState.CalendarEntries.DailyCalendarEntry?,
     isSelected: Boolean,
     onClick: (CalendarDay) -> Unit,
 ) {
@@ -194,12 +194,12 @@ private fun DayContent(
         contentAlignment = Alignment.Center,
     ) {
         if (calendarDay.position == DayPosition.MonthDate) {
-            when (val progress = entries?.progress) {
-                CalendarEntriesProgress.GoalAchieved -> GoalAchievedBackground()
-                CalendarEntriesProgress.GoalAchievedStreakStart -> GoalAchievedStreakStartBackground()
-                CalendarEntriesProgress.GoalAchievedStreakMiddle -> GoalAchievedStreakMiddleBackground()
-                CalendarEntriesProgress.GoalAchievedStreakEnd -> GoalAchievedStreakEndBackground()
-                is CalendarEntriesProgress.GoalProgress -> GoalProgressBackground(progress)
+            when (val progress = entry?.progress) {
+                CalendarEntryProgress.GoalAchieved -> GoalAchievedBackground()
+                CalendarEntryProgress.GoalAchievedStreakStart -> GoalAchievedStreakStartBackground()
+                CalendarEntryProgress.GoalAchievedStreakMiddle -> GoalAchievedStreakMiddleBackground()
+                CalendarEntryProgress.GoalAchievedStreakEnd -> GoalAchievedStreakEndBackground()
+                is CalendarEntryProgress.GoalProgress -> GoalProgressBackground(progress)
 
                 null -> Unit
             }
@@ -311,7 +311,7 @@ private fun GoalAchievedStreakEndBackground() {
 }
 
 @Composable
-private fun GoalProgressBackground(progress: CalendarEntriesProgress.GoalProgress) {
+private fun GoalProgressBackground(progress: CalendarEntryProgress.GoalProgress) {
     CircularProgressIndicator(
         modifier = Modifier
             .fillMaxSize()
