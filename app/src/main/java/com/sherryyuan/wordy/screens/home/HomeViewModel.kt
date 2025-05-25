@@ -4,8 +4,13 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sherryyuan.wordy.R
+import com.sherryyuan.wordy.entitymodels.Goal
 import com.sherryyuan.wordy.repositories.EntryRepository
 import com.sherryyuan.wordy.repositories.ProjectRepository
+import com.sherryyuan.wordy.screens.home.HomeViewState.DisplayedChartRange.ALL_TIME
+import com.sherryyuan.wordy.screens.home.HomeViewState.DisplayedChartRange.MONTH
+import com.sherryyuan.wordy.screens.home.HomeViewState.DisplayedChartRange.PROJECT_WITH_DEADLINE
+import com.sherryyuan.wordy.screens.home.HomeViewState.DisplayedChartRange.WEEK
 import com.sherryyuan.wordy.utils.DIGITS_REGEX
 import com.sherryyuan.wordy.utils.fromPastDays
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,18 +33,23 @@ class HomeViewModel @Inject constructor(
     private val entryRepository: EntryRepository,
 ) : ViewModel() {
 
-    // TODO delete this when it's not needed
+    private val wordCountInput = MutableStateFlow("")
+    private val displayedChartRange =
+        MutableStateFlow(HomeViewState.DisplayedChartRange.WEEK)
+
     init {
         viewModelScope.launch {
             projectRepository.getSelectedProject().collect { project ->
-                project?.id?.let { populateDailyEntries(it) }
+                if (project?.goal is Goal.DailyWordCountGoal && displayedChartRange.value == PROJECT_WITH_DEADLINE) {
+                    displayedChartRange.value = WEEK
+                } else if (project?.goal is Goal.DeadlineGoal && displayedChartRange.value != PROJECT_WITH_DEADLINE) {
+                    displayedChartRange.value = PROJECT_WITH_DEADLINE
+                }
+                // TODO delete this when it's not needed
+                project?.id?.let { populateDailyEntries(it) } // for testing purposes
             }
         }
     }
-
-    private val wordCountInput = MutableStateFlow("")
-    private val displayedChartRange =
-        MutableStateFlow(HomeViewState.DisplayedChartRange.PROJECT_WITH_DEADLINE)
 
     val state: StateFlow<HomeViewState> = createHomeState()
 
@@ -70,8 +80,9 @@ class HomeViewModel @Inject constructor(
         return combine(
             projectRepository.getSelectedProject(),
             entryRepository.getEntries(),
+            displayedChartRange,
             wordCountInput,
-        ) { selectedProject, entries, wordCountInput ->
+        ) { selectedProject, entries, chartRange, wordCountInput ->
             val projectTitle = when {
                 selectedProject == null -> context.getString(R.string.no_selected_project_title)
                 else -> selectedProject.title
@@ -80,18 +91,18 @@ class HomeViewModel @Inject constructor(
             val wordsToday = selectedProjectEntries
                 .fromPastDays(1)
                 .sumOf { it.wordCount }
-            val dailyWordCountGoal = selectedProject?.goal?.dailyWordCount ?: 0
+            val dailyWordCountGoal = selectedProject?.goal?.initialDailyWordCount ?: 0
             val chartWordCounts: Map<Long, Int> = when (displayedChartRange.value) {
-                HomeViewState.DisplayedChartRange.WEEK ->
+                WEEK ->
                     selectedProjectEntries.fromPastDays(7)
                         .associate { it.timestamp to it.wordCount }
 
-                HomeViewState.DisplayedChartRange.MONTH ->
+                MONTH ->
                     selectedProjectEntries.fromPastDays(30)
                         .associate { it.timestamp to it.wordCount }
 
-                HomeViewState.DisplayedChartRange.ALL_TIME -> TODO()
-                HomeViewState.DisplayedChartRange.PROJECT_WITH_DEADLINE -> {
+                ALL_TIME -> TODO()
+                PROJECT_WITH_DEADLINE -> {
                     val existingEntriesTimestamps = selectedProjectEntries.map { it.timestamp }
                     val existingEntriesCumulativeWordCounts = selectedProjectEntries.map {
                         it.wordCount
@@ -111,24 +122,27 @@ class HomeViewModel @Inject constructor(
                 currentWordCountInput = wordCountInput,
                 wordsToday = wordsToday,
                 dailyWordCountGoal = dailyWordCountGoal,
-                selectedDisplayedChartRange = displayedChartRange.value, // TODO handle selections
+                selectedDisplayedChartRange = chartRange, // TODO handle selections
                 chartWordCounts = chartWordCounts,
             )
         }.stateIn(viewModelScope, SharingStarted.Eagerly, HomeViewState.Loading)
     }
 
+    // populate a few random entries for testing
     private suspend fun populateDailyEntries(projectId: Long) {
         val calendar = Calendar.getInstance()
+        listOf(
+            (calendar.timeInMillis - TimeUnit.DAYS.toMillis(20)) to 300,
+            (calendar.timeInMillis - TimeUnit.DAYS.toMillis(18)) to 500,
+            (calendar.timeInMillis - TimeUnit.DAYS.toMillis(13)) to 1,
+            (calendar.timeInMillis - TimeUnit.DAYS.toMillis(10)) to 1201,
+            (calendar.timeInMillis - TimeUnit.DAYS.toMillis(5)) to 1500,
+            (calendar.timeInMillis - TimeUnit.DAYS.toMillis(2)) to 600,
 
-        for (i in 39 downTo 0) {
-            calendar.timeInMillis = System.currentTimeMillis()
-            calendar.add(Calendar.DAY_OF_YEAR, -i)
-            val timestamp =
-                calendar.timeInMillis - (calendar.timeInMillis % TimeUnit.DAYS.toMillis(1))
-
+            ).forEach { (timestamp, wordCount) ->
             entryRepository.insertEntry(
                 timestamp = timestamp,
-                wordCount = (0..2000).random(), // Random word count for variety
+                wordCount = wordCount,
                 projectId = projectId,
                 updateWordCountStrategy = EntryRepository.UpdateWordCountStrategy.REPLACE,
             )

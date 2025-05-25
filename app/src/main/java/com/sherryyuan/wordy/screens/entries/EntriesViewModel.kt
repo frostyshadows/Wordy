@@ -147,7 +147,7 @@ class EntriesViewModel @Inject constructor(
         }
         val dailyEntriesWithProgress =
             dailyEntriesWithoutProgress.mapIndexed { index, dailyCalendarEntries ->
-                val wordCountGoal = selectedProject?.goal?.dailyWordCount ?: 0
+                val wordCountGoal = selectedProject?.goal?.initialDailyWordCount ?: 0
                 val wordsCurrentDay = dailyCalendarEntries.entries.sumOf { it.wordCount }
                 val previousDayEntries = dailyEntriesWithoutProgress.getOrNull(index - 1)
                 val wordsPreviousDay = previousDayEntries?.entries?.sumOf { it.wordCount } ?: 0
@@ -171,7 +171,7 @@ class EntriesViewModel @Inject constructor(
             }
 
         return EntriesViewState.CalendarEntries(
-            dailyWordCountGoal = selectedProject?.goal?.dailyWordCount ?: 0,
+            dailyWordCountGoal = selectedProject?.goal?.initialDailyWordCount ?: 0,
             startYearMonth = earliestYearMonth(),
             dailyEntries = dailyEntriesWithProgress,
         )

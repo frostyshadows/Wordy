@@ -26,11 +26,13 @@ enum class ProjectStatus {
 
 sealed interface Goal {
 
-    val dailyWordCount: Int
+    // Word count goal stays the same for DailyWordCountGoal,
+    // but needs to be adjusted for DeadlineGoal based on logged entries.
+    val initialDailyWordCount: Int
 
     @JsonClass(generateAdapter = true)
     data class DailyWordCountGoal(
-        override val dailyWordCount: Int,
+        override val initialDailyWordCount: Int,
     ) : Goal
 
     @JsonClass(generateAdapter = true)
@@ -39,10 +41,21 @@ sealed interface Goal {
         val startDateMillis: Long,
         val targetEndDateMillis: Long,
     ) : Goal {
-        override val dailyWordCount: Int
+        override val initialDailyWordCount: Int
             get() {
                 val days = getDaysBetween(startDateMillis, targetEndDateMillis)
                 return (targetTotalWordCount / days).toInt()
             }
+
+        fun adjustedDailyWordCount(existingEntries: List<DailyEntry> = emptyList()): Int {
+            System.currentTimeMillis().coerceAtLeast(startDateMillis)
+            val remainingDays = getDaysBetween(
+                System.currentTimeMillis().coerceAtLeast(startDateMillis),
+                targetEndDateMillis,
+            )
+            val existingWordCount = existingEntries.sumOf { it.wordCount }
+            val remainingWordCount = targetTotalWordCount - existingWordCount
+            return (remainingWordCount / remainingDays).toInt()
+        }
     }
 }

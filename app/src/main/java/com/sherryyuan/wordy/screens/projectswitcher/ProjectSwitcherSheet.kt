@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
@@ -20,6 +21,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -97,6 +99,7 @@ private fun ProjectWithSelectionRow(
             .clickable { onClick() }
             .height(rowHeight.dp)
             .padding(horizontal = 24.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             modifier = Modifier.weight(1f),
@@ -118,12 +121,14 @@ private fun NewProjectRow(
     rowHeight: Float,
     onClick: () -> Unit,
 ) {
+    HorizontalDivider(modifier = Modifier.padding(horizontal = 24.dp))
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() }
             .height(rowHeight.dp)
             .padding(horizontal = 24.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(stringResource(R.string.new_project_button))
     }

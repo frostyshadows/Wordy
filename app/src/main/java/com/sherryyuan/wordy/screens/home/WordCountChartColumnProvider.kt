@@ -24,7 +24,7 @@ fun rememberDailyWordCountColumnProvider(
                 seriesIndex: Int,
                 extraStore: ExtraStore
             ): LineComponent {
-                val color = if (entry.y >= wordCountGoal) {
+                val color = if (entry.y >= entry.x * wordCountGoal) {
                     goalMetColor
                 } else {
                     defaultColor
