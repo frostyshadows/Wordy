@@ -18,11 +18,13 @@ import androidx.work.ListenableWorker.Result.success
 import androidx.work.WorkerParameters
 import com.sherryyuan.wordy.MainActivity
 import com.sherryyuan.wordy.R
+import com.sherryyuan.wordy.entitymodels.Goal
 import com.sherryyuan.wordy.repositories.EntryRepository
 import com.sherryyuan.wordy.repositories.ProjectRepository
 import com.sherryyuan.wordy.utils.fromPastDays
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 
 @HiltWorker
@@ -77,11 +79,12 @@ class NotificationWorker @AssistedInject constructor(
                 .fromPastDays(1)
                 .filter { it.projectId == selectedProject?.id }
                 .sumOf { it.wordCount }
-            Triple(selectedProject, wordCount, showRemoteInputWarning)
-        }.collect { (project, wordCount, showRemoteInputWarning) ->
-            if (project == null) return@collect
-            val wordCountGoal = project.goal.dailyWordCount
+            if (selectedProject == null) return@combine
 
+            val wordCountGoal = when (val goal = selectedProject.goal) {
+                is Goal.DailyWordCountGoal -> goal.initialDailyWordCount
+                is Goal.DeadlineGoal -> goal.adjustedDailyWordCount(entries)
+            }
             val title = buildString {
                 append(
                     context.getString(
@@ -119,7 +122,7 @@ class NotificationWorker @AssistedInject constructor(
                     .maybeSetMessage(
                         context.getString(
                             R.string.in_project_message_template,
-                            project.title,
+                            selectedProject.title,
                         )
                     )
                     .maybeSetProgress(wordCountGoal, wordCount)
@@ -131,7 +134,7 @@ class NotificationWorker @AssistedInject constructor(
                     .addAction(updateWordCountAction)
 
             notificationManager.notify(id, notification.build())
-        }
+        }.collect()
     }
 
     private fun createRemoteInputAction(

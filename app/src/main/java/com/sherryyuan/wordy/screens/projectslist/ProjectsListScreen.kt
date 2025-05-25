@@ -155,7 +155,7 @@ private fun ProjectCard(
                             text = stringResource(R.string.daily_goal_progress_template, wordCount),
                             color = MaterialTheme.colorScheme.secondary,
                         )
-                        Text(stringResource(R.string.daily_goal_goal_template, goal.dailyWordCount))
+                        Text(stringResource(R.string.daily_goal_goal_template, goal.initialDailyWordCount))
                     }
 
                     is Goal.DeadlineGoal -> {
