@@ -21,11 +21,11 @@ import com.sherryyuan.wordy.R
 import com.sherryyuan.wordy.entitymodels.Goal
 import com.sherryyuan.wordy.repositories.EntryRepository
 import com.sherryyuan.wordy.repositories.ProjectRepository
-import com.sherryyuan.wordy.utils.fromPastDays
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
+import java.time.LocalDate
 
 @HiltWorker
 class NotificationWorker @AssistedInject constructor(
@@ -77,8 +77,9 @@ class NotificationWorker @AssistedInject constructor(
         ) { selectedProject, entries, showRemoteInputWarning ->
             val selectedProjectEntries = entries.filter { it.projectId == selectedProject?.id }
             val wordCount = selectedProjectEntries
-                .fromPastDays(1)
-                .sumOf { it.wordCount }
+                .firstOrNull { it.date == LocalDate.now() }
+                ?.wordCount
+                ?: 0
             if (selectedProject == null) return@combine
 
             val wordCountGoal = when (val goal = selectedProject.goal) {

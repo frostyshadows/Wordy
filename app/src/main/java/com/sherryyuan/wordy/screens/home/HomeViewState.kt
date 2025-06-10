@@ -10,7 +10,10 @@ sealed interface HomeViewState {
         val projectDescription: String?,
         val currentWordCountInput: String,
         val wordsToday: Int,
-        val dailyWordCountGoal: Int,
+        // Used for drawing target line in cumulative goal charts
+        val initialWordCountGoal: Int,
+        // Same as initialWordCountGoal for daily goals.
+        val adjustedWordCountGoal: Int,
         val selectedDisplayedChartRange: DisplayedChartRange,
         val chartWordCounts: Map<LocalDate, Int>,
     ) : HomeViewState
