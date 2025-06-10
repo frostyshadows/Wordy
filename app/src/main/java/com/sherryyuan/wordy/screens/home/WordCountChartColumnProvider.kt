@@ -11,9 +11,13 @@ import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 
+/**
+ * @param isCumulativeGoal whether the word count goal is cumulative over time.
+ */
 @Composable
-fun rememberDailyWordCountColumnProvider(
+fun rememberWordCountColumnProvider(
     wordCountGoal: Int,
+    isCumulativeGoal: Boolean = false,
 ): ColumnCartesianLayer.ColumnProvider {
     val goalMetColor = MaterialTheme.colorScheme.primary
     val defaultColor = MaterialTheme.colorScheme.secondaryContainer
@@ -24,7 +28,9 @@ fun rememberDailyWordCountColumnProvider(
                 seriesIndex: Int,
                 extraStore: ExtraStore
             ): LineComponent {
-                val color = if (entry.y >= entry.x * wordCountGoal) {
+                val isDailyGoalMet = !isCumulativeGoal && entry.y >= wordCountGoal
+                val isCumulativeGoalMet = isCumulativeGoal && entry.y >= entry.x * wordCountGoal
+                val color = if (isDailyGoalMet || isCumulativeGoalMet) {
                     goalMetColor
                 } else {
                     defaultColor

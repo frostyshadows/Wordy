@@ -185,9 +185,6 @@ private fun DailyWordCountChart(
     wordCountGoal: Int,
 ) {
     val modelProducer = remember { CartesianChartModelProducer() }
-    val dateTimeFormatter = DateTimeFormatter
-        .ofPattern("MMM d")
-        .withZone(ZoneId.systemDefault())
     val xAxisDates = rememberXAxisDates(wordCounts.keys.toList())
     LaunchedEffect(Unit) {
         modelProducer.runTransaction {
@@ -199,13 +196,13 @@ private fun DailyWordCountChart(
         CartesianChartHost(
             chart = rememberCartesianChart(
                 rememberColumnCartesianLayer(
-                    rememberDailyWordCountColumnProvider(wordCountGoal)
+                    rememberWordCountColumnProvider(wordCountGoal, isCumulativeGoal = false)
                 ),
                 rememberLineCartesianLayer(),
                 startAxis = VerticalAxis.rememberStart(),
                 bottomAxis = HorizontalAxis.rememberBottom(
                     valueFormatter = { _, x, _ ->
-                        dateTimeFormatter.format(Instant.ofEpochMilli(x.toLong()))
+                        xAxisDates[x.toInt()]
                     }
                 ),
                 decorations = listOf(
@@ -243,7 +240,7 @@ private fun CumulativeWordCountChart(
         CartesianChartHost(
             chart = rememberCartesianChart(
                 rememberColumnCartesianLayer(
-                    rememberDailyWordCountColumnProvider(wordCountGoal)
+                    rememberWordCountColumnProvider(wordCountGoal, isCumulativeGoal = true)
                 ),
                 rememberLineCartesianLayer(),
                 startAxis = VerticalAxis.rememberStart(),

@@ -13,6 +13,7 @@ import com.sherryyuan.wordy.screens.home.HomeViewState.DisplayedChartRange.PROJE
 import com.sherryyuan.wordy.screens.home.HomeViewState.DisplayedChartRange.WEEK
 import com.sherryyuan.wordy.utils.DIGITS_REGEX
 import com.sherryyuan.wordy.utils.fromPastDays
+import com.sherryyuan.wordy.utils.generatePastLocalDates
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,8 +34,7 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val wordCountInput = MutableStateFlow("")
-    private val displayedChartRange =
-        MutableStateFlow(HomeViewState.DisplayedChartRange.WEEK)
+    private val displayedChartRange = MutableStateFlow(HomeViewState.DisplayedChartRange.WEEK)
 
     init {
         viewModelScope.launch {
@@ -98,13 +98,21 @@ class HomeViewModel @Inject constructor(
                 null -> 0
             }
             val chartWordCounts: Map<LocalDate, Int> = when (displayedChartRange.value) {
-                WEEK ->
-                    selectedProjectEntries.fromPastDays(7)
-                        .associate { it.date to it.wordCount }
+                WEEK -> {
+                    val dates = generatePastLocalDates(7)
+                    dates.associateWith { date ->
+                        val entry = selectedProjectEntries.firstOrNull { it.date == date }
+                        entry?.wordCount ?: 0
+                    }
+                }
 
-                MONTH ->
-                    selectedProjectEntries.fromPastDays(30)
-                        .associate { it.date to it.wordCount }
+                MONTH -> {
+                    val dates = generatePastLocalDates(30)
+                    dates.associateWith { date ->
+                        val entry = selectedProjectEntries.firstOrNull { it.date == date }
+                        entry?.wordCount ?: 0
+                    }
+                }
 
                 ALL_TIME -> TODO()
                 PROJECT_WITH_DEADLINE -> {
