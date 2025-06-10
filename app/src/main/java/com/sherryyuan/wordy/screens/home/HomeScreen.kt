@@ -56,7 +56,6 @@ import com.sherryyuan.wordy.R
 import com.sherryyuan.wordy.ui.theme.VerticalSpacer
 import com.sherryyuan.wordy.ui.theme.WordyTheme
 import com.sherryyuan.wordy.ui.topAndSideContentPadding
-import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -115,20 +114,20 @@ private fun LoadedHomeScreen(
         VerticalSpacer(heightDp = 4)
 
         LinearProgressIndicator(
-            progress = { viewState.wordsToday.toFloat() / viewState.dailyWordCountGoal },
+            progress = { viewState.wordsToday.toFloat() / viewState.adjustedWordCountGoal },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(8.dp),
             drawStopIndicator = {},
         )
         VerticalSpacer(heightDp = 4)
-        val remainingWordCount = viewState.dailyWordCountGoal - viewState.wordsToday
+        val remainingWordCount = viewState.adjustedWordCountGoal - viewState.wordsToday
         if (remainingWordCount > 0) {
             Text(
                 stringResource(
                     R.string.words_to_go_message,
                     remainingWordCount,
-                    viewState.dailyWordCountGoal,
+                    viewState.adjustedWordCountGoal,
                 )
             )
         } else {
@@ -140,12 +139,12 @@ private fun LoadedHomeScreen(
             when (viewState.selectedDisplayedChartRange) {
                 HomeViewState.DisplayedChartRange.PROJECT_WITH_DEADLINE -> CumulativeWordCountChart(
                     viewState.chartWordCounts,
-                    viewState.dailyWordCountGoal,
+                    viewState.initialWordCountGoal,
                 )
 
                 else -> DailyWordCountChart(
                     viewState.chartWordCounts,
-                    viewState.dailyWordCountGoal,
+                    viewState.initialWordCountGoal,
                 )
             }
         }
@@ -185,9 +184,6 @@ private fun DailyWordCountChart(
     wordCountGoal: Int,
 ) {
     val modelProducer = remember { CartesianChartModelProducer() }
-    val dateTimeFormatter = DateTimeFormatter
-        .ofPattern("MMM d")
-        .withZone(ZoneId.systemDefault())
     val xAxisDates = rememberXAxisDates(wordCounts.keys.toList())
     LaunchedEffect(Unit) {
         modelProducer.runTransaction {
@@ -199,13 +195,13 @@ private fun DailyWordCountChart(
         CartesianChartHost(
             chart = rememberCartesianChart(
                 rememberColumnCartesianLayer(
-                    rememberDailyWordCountColumnProvider(wordCountGoal)
+                    rememberWordCountColumnProvider(wordCountGoal, isCumulativeGoal = false)
                 ),
                 rememberLineCartesianLayer(),
                 startAxis = VerticalAxis.rememberStart(),
                 bottomAxis = HorizontalAxis.rememberBottom(
                     valueFormatter = { _, x, _ ->
-                        dateTimeFormatter.format(Instant.ofEpochMilli(x.toLong()))
+                        xAxisDates[x.toInt()]
                     }
                 ),
                 decorations = listOf(
@@ -243,7 +239,7 @@ private fun CumulativeWordCountChart(
         CartesianChartHost(
             chart = rememberCartesianChart(
                 rememberColumnCartesianLayer(
-                    rememberDailyWordCountColumnProvider(wordCountGoal)
+                    rememberWordCountColumnProvider(wordCountGoal, isCumulativeGoal = true)
                 ),
                 rememberLineCartesianLayer(),
                 startAxis = VerticalAxis.rememberStart(),
@@ -314,7 +310,8 @@ private fun LoadedHomePreview() {
                 projectDescription = null,
                 currentWordCountInput = "100",
                 wordsToday = 200,
-                dailyWordCountGoal = 500,
+                adjustedWordCountGoal = 500,
+                initialWordCountGoal = 500,
                 selectedDisplayedChartRange = HomeViewState.DisplayedChartRange.WEEK,
                 chartWordCounts = mapOf(),
             ),

@@ -1,5 +1,6 @@
 package com.sherryyuan.wordy.utils
 
+import androidx.core.util.rangeTo
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -18,3 +19,9 @@ fun Long.toLocalDate(): LocalDate = Instant.ofEpochMilli(this)
 fun LocalDate.toEpochMillis(): Long = atStartOfDay(ZoneId.systemDefault())
     .toInstant()
     .toEpochMilli()
+
+fun generatePastLocalDates(days: Int): List<LocalDate> {
+    val today = LocalDate.now()
+    val earliestDay = days.toLong() - 1
+    return (earliestDay downTo  0).map { today.minusDays(it) }
+}

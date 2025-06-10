@@ -12,7 +12,7 @@ import com.sherryyuan.wordy.screens.home.HomeViewState.DisplayedChartRange.MONTH
 import com.sherryyuan.wordy.screens.home.HomeViewState.DisplayedChartRange.PROJECT_WITH_DEADLINE
 import com.sherryyuan.wordy.screens.home.HomeViewState.DisplayedChartRange.WEEK
 import com.sherryyuan.wordy.utils.DIGITS_REGEX
-import com.sherryyuan.wordy.utils.fromPastDays
+import com.sherryyuan.wordy.utils.generatePastLocalDates
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,8 +33,7 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val wordCountInput = MutableStateFlow("")
-    private val displayedChartRange =
-        MutableStateFlow(HomeViewState.DisplayedChartRange.WEEK)
+    private val displayedChartRange = MutableStateFlow(HomeViewState.DisplayedChartRange.WEEK)
 
     init {
         viewModelScope.launch {
@@ -86,11 +85,13 @@ class HomeViewModel @Inject constructor(
                 selectedProject == null -> context.getString(R.string.no_selected_project_title)
                 else -> selectedProject.title
             }
-            val selectedProjectEntries = entries.filter { it.projectId == selectedProject?.id }
+            val selectedProjectEntries = entries
+                .filter { it.projectId == selectedProject?.id }
             val wordsToday = selectedProjectEntries
-                .fromPastDays(1)
-                .sumOf { it.wordCount }
-            val dailyWordCountGoal = when (val goal = selectedProject?.goal) {
+                .firstOrNull { it.date == LocalDate.now() }
+                ?.wordCount
+                ?: 0
+            val adjustedWordCountGoal = when (val goal = selectedProject?.goal) {
                 is Goal.DailyWordCountGoal -> goal.initialDailyWordCount
                 is Goal.DeadlineGoal ->
                     goal.adjustedDailyWordCount(selectedProjectEntries)
@@ -98,16 +99,29 @@ class HomeViewModel @Inject constructor(
                 null -> 0
             }
             val chartWordCounts: Map<LocalDate, Int> = when (displayedChartRange.value) {
-                WEEK ->
-                    selectedProjectEntries.fromPastDays(7)
-                        .associate { it.date to it.wordCount }
+                WEEK -> {
+                    val dates = generatePastLocalDates(7)
+                    dates.associateWith { date ->
+                        val entry = selectedProjectEntries.firstOrNull { it.date == date }
+                        entry?.wordCount ?: 0
+                    }
+                }
 
-                MONTH ->
-                    selectedProjectEntries.fromPastDays(30)
-                        .associate { it.date to it.wordCount }
+                MONTH -> {
+                    val dates = generatePastLocalDates(30)
+                    dates.associateWith { date ->
+                        val entry = selectedProjectEntries.firstOrNull { it.date == date }
+                        entry?.wordCount ?: 0
+                    }
+                }
 
                 ALL_TIME -> TODO()
                 PROJECT_WITH_DEADLINE -> {
+                    val start = (selectedProject?.goal as? Goal.DeadlineGoal)?.startDate
+                    val end = (selectedProject?.goal as? Goal.DeadlineGoal)?.targetEndDate
+                    val dates = generateSequence(start) { it.plusDays(1) }
+                        .takeWhile { !it.isAfter(end) }
+                        .toList()
                     val existingEntriesDates = selectedProjectEntries.map { it.date }
                     val existingEntriesCumulativeWordCounts = selectedProjectEntries.map {
                         it.wordCount
@@ -116,9 +130,10 @@ class HomeViewModel @Inject constructor(
                     }
                     val existingEntries = existingEntriesDates
                         .zip(existingEntriesCumulativeWordCounts)
-                        .toMap()
-                    val futureEntries = mapOf<LocalDate, Int>() // TODO
-                    existingEntries + futureEntries
+                    dates.associateWith { date ->
+                        val entry = existingEntries.firstOrNull { it.first == date }
+                        entry?.second ?: 0
+                    }
                 }
             }
             HomeViewState.Loaded(
@@ -126,7 +141,8 @@ class HomeViewModel @Inject constructor(
                 projectDescription = selectedProject?.description,
                 currentWordCountInput = wordCountInput,
                 wordsToday = wordsToday,
-                dailyWordCountGoal = dailyWordCountGoal,
+                adjustedWordCountGoal = adjustedWordCountGoal,
+                initialWordCountGoal = selectedProject?.goal?.initialDailyWordCount ?: 0,
                 selectedDisplayedChartRange = chartRange, // TODO handle selections
                 chartWordCounts = chartWordCounts,
             )
