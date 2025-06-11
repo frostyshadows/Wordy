@@ -19,7 +19,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -34,31 +33,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
-import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
-import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
-import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
-import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
-import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
-import com.patrykandpatrick.vico.compose.common.ProvideVicoTheme
-import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
-import com.patrykandpatrick.vico.compose.m3.common.rememberM3VicoTheme
-import com.patrykandpatrick.vico.core.cartesian.Zoom
-import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
-import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
-import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
-import com.patrykandpatrick.vico.core.cartesian.decoration.HorizontalLine
 import com.sherryyuan.wordy.R
 import com.sherryyuan.wordy.ui.theme.VerticalSpacer
 import com.sherryyuan.wordy.ui.theme.WordyTheme
 import com.sherryyuan.wordy.ui.topAndSideContentPadding
-import java.time.LocalDate
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 
 @Composable
 fun HomeScreen(
@@ -83,7 +61,8 @@ fun HomeScreen(
                     onWordCountInputSubmit = {
                         viewModel.onWordCountInputSubmit()
                         keyboardController?.hide()
-                    }
+                    },
+                    onChartRangeSelected = { viewModel.onChartRangeSelected(it) }
                 )
             }
         }
@@ -95,6 +74,7 @@ private fun LoadedHomeScreen(
     viewState: HomeViewState.Loaded,
     onWordCountInputChange: (String) -> Unit,
     onWordCountInputSubmit: () -> Unit,
+    onChartRangeSelected: (HomeViewState.DisplayedChartRange) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -142,10 +122,17 @@ private fun LoadedHomeScreen(
                     viewState.initialWordCountGoal,
                 )
 
-                else -> DailyWordCountChart(
-                    viewState.chartWordCounts,
-                    viewState.initialWordCountGoal,
-                )
+                else -> {
+                    DailyWordCountChart(
+                        viewState.chartWordCounts,
+                        viewState.initialWordCountGoal,
+                    )
+                    VerticalSpacer()
+                    ChartRangePicker(
+                        selectedChartRange = viewState.selectedDisplayedChartRange,
+                        onChartRangeSelected = onChartRangeSelected,
+                    )
+                }
             }
         }
     }
@@ -174,96 +161,6 @@ private fun WordCountInput(
             shape = RoundedCornerShape(8.dp)
         ) {
             Text(stringResource(R.string.log_button_label))
-        }
-    }
-}
-
-@Composable
-private fun DailyWordCountChart(
-    wordCounts: Map<LocalDate, Int>,
-    wordCountGoal: Int,
-) {
-    val modelProducer = remember { CartesianChartModelProducer() }
-    val xAxisDates = rememberXAxisDates(wordCounts.keys.toList())
-    LaunchedEffect(Unit) {
-        modelProducer.runTransaction {
-            columnSeries { series(wordCounts.values) }
-        }
-    }
-
-    ProvideVicoTheme(rememberM3VicoTheme()) {
-        CartesianChartHost(
-            chart = rememberCartesianChart(
-                rememberColumnCartesianLayer(
-                    rememberWordCountColumnProvider(wordCountGoal, isCumulativeGoal = false)
-                ),
-                rememberLineCartesianLayer(),
-                startAxis = VerticalAxis.rememberStart(),
-                bottomAxis = HorizontalAxis.rememberBottom(
-                    valueFormatter = { _, x, _ ->
-                        xAxisDates[x.toInt()]
-                    }
-                ),
-                decorations = listOf(
-                    HorizontalLine(
-                        y = { wordCountGoal.toDouble() },
-                        line = rememberLineComponent(),
-                    )
-                ),
-            ),
-            modelProducer = modelProducer,
-            zoomState = rememberVicoZoomState(zoomEnabled = false, initialZoom = Zoom.Content),
-            scrollState = rememberVicoScrollState(scrollEnabled = false),
-        )
-    }
-}
-
-@Composable
-private fun CumulativeWordCountChart(
-    wordCounts: Map<LocalDate, Int>,
-    wordCountGoal: Int,
-) {
-    val modelProducer = remember { CartesianChartModelProducer() }
-    val xAxisDates = rememberXAxisDates(wordCounts.keys.toList())
-    LaunchedEffect(Unit) {
-        modelProducer.runTransaction {
-            columnSeries { series(wordCounts.values) }
-            val targetLine = List(wordCounts.size) { index ->
-                (index + 1) * wordCountGoal
-            }
-            lineSeries { series(targetLine) }
-        }
-    }
-
-    ProvideVicoTheme(rememberM3VicoTheme()) {
-        CartesianChartHost(
-            chart = rememberCartesianChart(
-                rememberColumnCartesianLayer(
-                    rememberWordCountColumnProvider(wordCountGoal, isCumulativeGoal = true)
-                ),
-                rememberLineCartesianLayer(),
-                startAxis = VerticalAxis.rememberStart(),
-                bottomAxis = HorizontalAxis.rememberBottom(
-                    valueFormatter = { _, x, _ ->
-                        xAxisDates[x.toInt()]
-                    }
-                ),
-            ),
-            modelProducer = modelProducer,
-            zoomState = rememberVicoZoomState(zoomEnabled = false, initialZoom = Zoom.Content),
-            scrollState = rememberVicoScrollState(scrollEnabled = false),
-        )
-    }
-}
-
-@Composable
-private fun rememberXAxisDates(dates: List<LocalDate>): List<String> {
-    val dateTimeFormatter = DateTimeFormatter
-        .ofPattern("MMM d")
-        .withZone(ZoneId.systemDefault())
-    return remember {
-        dates.map {
-            dateTimeFormatter.format(it)
         }
     }
 }
@@ -317,6 +214,7 @@ private fun LoadedHomePreview() {
             ),
             onWordCountInputChange = {},
             onWordCountInputSubmit = {},
+            onChartRangeSelected = {},
         )
     }
 }

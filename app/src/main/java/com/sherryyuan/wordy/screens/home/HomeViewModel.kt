@@ -13,6 +13,7 @@ import com.sherryyuan.wordy.screens.home.HomeViewState.DisplayedChartRange.PROJE
 import com.sherryyuan.wordy.screens.home.HomeViewState.DisplayedChartRange.WEEK
 import com.sherryyuan.wordy.utils.DIGITS_REGEX
 import com.sherryyuan.wordy.utils.generatePastLocalDates
+import com.sherryyuan.wordy.utils.projectDaysCount
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -74,6 +75,10 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun onChartRangeSelected(chartRange: HomeViewState.DisplayedChartRange) {
+        displayedChartRange.value = chartRange
+    }
+
     private fun createHomeState(): StateFlow<HomeViewState> {
         return combine(
             projectRepository.getSelectedProject(),
@@ -115,7 +120,18 @@ class HomeViewModel @Inject constructor(
                     }
                 }
 
-                ALL_TIME -> TODO()
+                ALL_TIME -> {
+                    val startDate = selectedProjectEntries.minOf { it.date }
+                    val projectDaysCount = projectDaysCount(
+                        startDate = startDate,
+                        endDate = LocalDate.now(),
+                    )
+                    val dates = generatePastLocalDates(projectDaysCount)
+                    dates.associateWith { date ->
+                        val entry = selectedProjectEntries.firstOrNull { it.date == date }
+                        entry?.wordCount ?: 0
+                    }
+                }
                 PROJECT_WITH_DEADLINE -> {
                     val start = (selectedProject?.goal as? Goal.DeadlineGoal)?.startDate
                     val end = (selectedProject?.goal as? Goal.DeadlineGoal)?.targetEndDate
@@ -143,7 +159,7 @@ class HomeViewModel @Inject constructor(
                 wordsToday = wordsToday,
                 adjustedWordCountGoal = adjustedWordCountGoal,
                 initialWordCountGoal = selectedProject?.goal?.initialDailyWordCount ?: 0,
-                selectedDisplayedChartRange = chartRange, // TODO handle selections
+                selectedDisplayedChartRange = chartRange,
                 chartWordCounts = chartWordCounts,
             )
         }.stateIn(viewModelScope, SharingStarted.Eagerly, HomeViewState.Loading)

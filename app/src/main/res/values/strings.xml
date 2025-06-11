@@ -47,6 +47,10 @@
     <string name="goal_achieved">Daily goal achieved!</string>
     <string name="invalid_input_warning">Please enter a valid number</string>
 
+    <string name="chart_range_week">WEEK</string>
+    <string name="chart_range_month">MONTH</string>
+    <string name="chart_range_all">ALL</string>
+
     <string name="no_selected_project_title">No project selected</string>
     <string name="default_just_write_project_title">Just writing</string>
 
