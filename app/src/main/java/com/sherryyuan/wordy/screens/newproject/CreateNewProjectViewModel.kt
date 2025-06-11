@@ -78,9 +78,6 @@ class CreateNewProjectViewModel @Inject constructor(
 
     fun updateEndDate(input: LocalDate) {
         val currentGoal = goal.value as? NewProjectGoal.Deadline ?: return
-        if (input <= currentGoal.projectStartDate) {
-            return // TODO show warning
-        }
         val updatedGoal = currentGoal.copy(targetProjectEndDate = input)
         goal.value = updatedGoal
     }

@@ -125,7 +125,7 @@ fun ColumnScope.DeadlineGoalEditor(
     modalMessage?.let { message ->
         AlertDialog(
             onDismissRequest = { modalMessage = null },
-            text = { Text(message) },
+            title = { Text(message) },
             confirmButton = {
                 TextButton(
                     onClick = { modalMessage = null }
