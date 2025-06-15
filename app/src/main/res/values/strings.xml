@@ -71,4 +71,9 @@
     <string name="edit_label">Edit</string>
     <string name="save_label">Save</string>
     <string name="add_label">Add</string>
+
+    <string name="edit_project_goal_title">Goal</string>
+    <string name="edit_project_add_description">Add description</string>
+    <string name="edit_project_deadline_goal_template">%1$d words between %2$s and %3$s</string>
+    <string name="edit_project_words_per_day_template">%1$d words per day</string>
 </resources>

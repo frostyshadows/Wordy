@@ -34,7 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sherryyuan.wordy.R
-import com.sherryyuan.wordy.ui.theme.VerticalSpacer
+import com.sherryyuan.wordy.ui.VerticalSpacer
 import com.sherryyuan.wordy.ui.theme.WordyTheme
 import com.sherryyuan.wordy.ui.topAndSideContentPadding
 

@@ -38,9 +38,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.sherryyuan.wordy.R
 import com.sherryyuan.wordy.entitymodels.Goal
 import com.sherryyuan.wordy.entitymodels.Project
-import com.sherryyuan.wordy.ui.theme.VerticalSpacer
+import com.sherryyuan.wordy.ui.VerticalSpacer
 import com.sherryyuan.wordy.ui.topAndSideContentPadding
 import com.sherryyuan.wordy.utils.TOP_BAR_ANIMATION_KEY
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
@@ -131,6 +133,9 @@ private fun ProjectCard(
     projectWithWordCount: Pair<Project, Int>,
     onClick: () -> Unit,
 ) {
+    val dateTimeFormatter = DateTimeFormatter
+        .ofPattern("MMM d, yyyy")
+        .withZone(ZoneId.systemDefault())
     Card(
         modifier = Modifier
             .padding(vertical = 4.dp)
@@ -176,7 +181,7 @@ private fun ProjectCard(
                             stringResource(
                                 R.string.deadline_goal_goal_template,
                                 goal.targetTotalWordCount,
-                                goal.targetEndDate.toString(),
+                                goal.targetEndDate.format(dateTimeFormatter),
                             )
                         )
                     }

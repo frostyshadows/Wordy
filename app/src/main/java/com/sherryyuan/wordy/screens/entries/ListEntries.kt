@@ -22,7 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.sherryyuan.wordy.R
-import com.sherryyuan.wordy.ui.theme.HorizontalSpacer
+import com.sherryyuan.wordy.ui.HorizontalSpacer
 import com.sherryyuan.wordy.ui.theme.WordyTheme
 import java.time.YearMonth
 

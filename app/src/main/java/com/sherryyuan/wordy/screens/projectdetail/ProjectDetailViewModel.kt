@@ -3,6 +3,7 @@ package com.sherryyuan.wordy.screens.projectdetail
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sherryyuan.wordy.entitymodels.Goal
 import com.sherryyuan.wordy.entitymodels.ProjectStatus
 import com.sherryyuan.wordy.navigation.WordyNavDestination.Companion.NAV_ARG_PROJECT_ID
 import com.sherryyuan.wordy.repositories.EntryRepository
@@ -25,22 +26,35 @@ class ProjectDetailViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val projectId = savedStateHandle.get<Long>(NAV_ARG_PROJECT_ID)
+    private val isEditing = MutableStateFlow(false)
 
     // initialization order matters here since projectId is used in state creation
     val state: StateFlow<ProjectDetailViewState> = createProjectDetailState()
 
-    fun onTitleUpdate(title: String) {
-        projectId?.let {
-            viewModelScope.launch(Dispatchers.IO) {
-                projectRepository.updateProject(id = it, title = title)
-            }
-        }
+    fun updateIsEditing(isEditing: Boolean) {
+        this.isEditing.value = isEditing
     }
 
-    fun onStatusUpdate(status: ProjectStatus) {
+    fun saveProject(
+        title: String,
+        status: ProjectStatus,
+        description: String?,
+        goal: Goal,
+    ) {
         projectId?.let {
             viewModelScope.launch(Dispatchers.IO) {
-                projectRepository.updateProject(id = it, status = status)
+                val updatedGoal = if (goal.initialDailyWordCount > 0) {
+                    goal
+                } else {
+                    null
+                }
+                projectRepository.updateProject(
+                    id = it,
+                    title = title,
+                    status = status,
+                    description = description,
+                    goal = updatedGoal,
+                )
             }
         }
     }
@@ -50,12 +64,14 @@ class ProjectDetailViewModel @Inject constructor(
         return combine(
             projectRepository.getProjectsById(projectId),
             entryRepository.getEntries(),
-        ) { project, entries ->
+            isEditing,
+        ) { project, entries, isEditing ->
             val wordCount = entries
                 .filter { it.projectId == project.id }
                 .sumOf { it.wordCount }
             ProjectDetailViewState.Loaded(
-                Pair(project, wordCount)
+                projectWithWordCount = Pair(project, wordCount),
+                isEditing = isEditing,
             )
         }.stateIn(
             viewModelScope, SharingStarted.Eagerly,
