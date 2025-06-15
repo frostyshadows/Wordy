@@ -7,5 +7,6 @@ sealed interface ProjectDetailViewState {
 
     data class Loaded(
         val projectWithWordCount: Pair<Project, Int>,
+        val isEditing: Boolean,
     ) : ProjectDetailViewState
 }

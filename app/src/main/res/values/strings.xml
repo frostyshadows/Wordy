@@ -71,4 +71,6 @@
     <string name="edit_label">Edit</string>
     <string name="save_label">Save</string>
     <string name="add_label">Add</string>
+
+    <string name="add_project_description">Add description</string>
 </resources>
