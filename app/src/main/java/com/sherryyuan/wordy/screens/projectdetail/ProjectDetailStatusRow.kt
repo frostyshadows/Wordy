@@ -28,7 +28,7 @@ import com.sherryyuan.wordy.R
 import com.sherryyuan.wordy.entitymodels.ProjectStatus
 import com.sherryyuan.wordy.screens.projectslist.getStatusColor
 import com.sherryyuan.wordy.screens.projectslist.getStatusLabelRes
-import com.sherryyuan.wordy.ui.theme.HorizontalSpacer
+import com.sherryyuan.wordy.ui.HorizontalSpacer
 
 @Composable
 fun ProjectStatusRow(

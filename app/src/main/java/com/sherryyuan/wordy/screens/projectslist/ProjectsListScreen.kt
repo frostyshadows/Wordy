@@ -38,7 +38,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.sherryyuan.wordy.R
 import com.sherryyuan.wordy.entitymodels.Goal
 import com.sherryyuan.wordy.entitymodels.Project
-import com.sherryyuan.wordy.ui.theme.VerticalSpacer
+import com.sherryyuan.wordy.ui.VerticalSpacer
 import com.sherryyuan.wordy.ui.topAndSideContentPadding
 import com.sherryyuan.wordy.utils.TOP_BAR_ANIMATION_KEY
 import java.time.ZoneId

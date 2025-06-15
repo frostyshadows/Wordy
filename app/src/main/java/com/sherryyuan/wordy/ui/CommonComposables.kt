@@ -1,4 +1,4 @@
-package com.sherryyuan.wordy.ui.theme
+package com.sherryyuan.wordy.ui
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding

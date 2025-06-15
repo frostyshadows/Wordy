@@ -3,6 +3,7 @@ package com.sherryyuan.wordy.screens.projectdetail
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sherryyuan.wordy.entitymodels.Goal
 import com.sherryyuan.wordy.entitymodels.ProjectStatus
 import com.sherryyuan.wordy.navigation.WordyNavDestination.Companion.NAV_ARG_PROJECT_ID
 import com.sherryyuan.wordy.repositories.EntryRepository
@@ -38,14 +39,21 @@ class ProjectDetailViewModel @Inject constructor(
         title: String,
         status: ProjectStatus,
         description: String?,
+        goal: Goal,
     ) {
         projectId?.let {
             viewModelScope.launch(Dispatchers.IO) {
+                val updatedGoal = if (goal.initialDailyWordCount > 0) {
+                    goal
+                } else {
+                    null
+                }
                 projectRepository.updateProject(
                     id = it,
                     title = title,
                     status = status,
                     description = description,
+                    goal = updatedGoal,
                 )
             }
         }

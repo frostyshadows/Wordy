@@ -17,7 +17,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.sherryyuan.wordy.R
 import com.sherryyuan.wordy.screens.newproject.CreateNewProjectViewState.NewProjectGoal
-import com.sherryyuan.wordy.ui.theme.VerticalSpacer
+import com.sherryyuan.wordy.ui.VerticalSpacer
 
 @Composable
 fun ColumnScope.WordCountGoalEditor(

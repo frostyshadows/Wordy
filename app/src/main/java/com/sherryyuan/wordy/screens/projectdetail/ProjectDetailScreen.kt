@@ -12,7 +12,6 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -24,11 +23,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sherryyuan.wordy.R
-import com.sherryyuan.wordy.entitymodels.Project
+import com.sherryyuan.wordy.entitymodels.Goal
 import com.sherryyuan.wordy.entitymodels.ProjectStatus
 import com.sherryyuan.wordy.utils.TOP_BAR_ANIMATION_KEY
 
@@ -54,6 +52,12 @@ fun SharedTransitionScope.ProjectDetailScreen(
     var editedDescription by remember(viewState) {
         mutableStateOf((viewState as? ProjectDetailViewState.Loaded)?.projectWithWordCount?.first?.description)
     }
+    var editedGoal by remember(viewState) {
+        mutableStateOf(
+            (viewState as? ProjectDetailViewState.Loaded)?.projectWithWordCount?.first?.goal
+                ?: Goal.DailyWordCountGoal(500)
+        )
+    }
 
     Scaffold(
         topBar = {
@@ -70,9 +74,10 @@ fun SharedTransitionScope.ProjectDetailScreen(
                     viewModel.updateIsEditing(isEditing)
                     if (!isEditing) {
                         viewModel.saveProject(
-                                title = editedTitle,
-                                status = editedStatus,
-                                description = editedDescription,
+                            title = editedTitle,
+                            status = editedStatus,
+                            description = editedDescription,
+                            goal = editedGoal,
                         )
                     }
                 },
@@ -85,9 +90,11 @@ fun SharedTransitionScope.ProjectDetailScreen(
                 modifier = Modifier.padding(contentPadding),
                 status = editedStatus,
                 description = editedDescription,
+                goal = editedGoal,
                 isEditing = isEditing,
                 onStatusUpdate = { editedStatus = it },
                 onDescriptionUpdate = { editedDescription = it },
+                onGoalUpdate = { editedGoal = it },
             )
 
             ProjectDetailViewState.Loading -> {}
@@ -99,9 +106,11 @@ fun SharedTransitionScope.ProjectDetailScreen(
 private fun LoadedProjectDetails(
     status: ProjectStatus,
     description: String?,
+    goal: Goal,
     isEditing: Boolean,
     onStatusUpdate: (ProjectStatus) -> Unit,
     onDescriptionUpdate: (String) -> Unit,
+    onGoalUpdate: (Goal) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier) {
@@ -114,6 +123,11 @@ private fun LoadedProjectDetails(
             description = description,
             isEditing = isEditing,
             onDescriptionUpdate = onDescriptionUpdate,
+        )
+        ProjectDetailGoalSection(
+            goal = goal,
+            isEditing = isEditing,
+            onGoalUpdate = onGoalUpdate,
         )
     }
 }
@@ -144,7 +158,7 @@ private fun ProjectDescriptionSection(
                         .padding(horizontal = 24.dp),
                     value = description.orEmpty(),
                     placeholder = {
-                        Text(stringResource(R.string.add_project_description))
+                        Text(stringResource(R.string.edit_project_add_description))
                     },
                     onValueChange = { onDescriptionUpdate(it) },
                 )
@@ -153,7 +167,6 @@ private fun ProjectDescriptionSection(
                     Text(it)
                 }
             }
-
         }
     }
 }
