@@ -2,6 +2,7 @@ package com.sherryyuan.wordy.screens.projectdetail
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.heightIn
@@ -18,6 +19,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -26,9 +28,16 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.sherryyuan.wordy.R
 import com.sherryyuan.wordy.entitymodels.ProjectStatus
-import com.sherryyuan.wordy.screens.projectslist.getStatusColor
 import com.sherryyuan.wordy.screens.projectslist.getStatusLabelRes
 import com.sherryyuan.wordy.ui.HorizontalSpacer
+import com.sherryyuan.wordy.ui.theme.EmeraldGreen
+import com.sherryyuan.wordy.ui.theme.PineGreen
+import com.sherryyuan.wordy.ui.theme.NavyBlue
+import com.sherryyuan.wordy.ui.theme.SkyBlue
+import com.sherryyuan.wordy.ui.theme.LightGray
+import com.sherryyuan.wordy.ui.theme.PaleYellow
+import com.sherryyuan.wordy.ui.theme.YellowOchre
+import com.sherryyuan.wordy.ui.theme.WarmGray
 
 @Composable
 fun ProjectStatusRow(
@@ -112,4 +121,24 @@ private fun measureTextHeight(text: String, style: TextStyle): Dp {
     val textMeasurer = rememberTextMeasurer()
     val heightPixels = textMeasurer.measure(text, style).size.height
     return with(LocalDensity.current) { heightPixels.toDp() }
+}
+
+@Composable
+private fun getStatusColor(status: ProjectStatus): Color {
+    val darkTheme = isSystemInDarkTheme()
+    return if (darkTheme) {
+        when (status) {
+            ProjectStatus.NOT_STARTED -> WarmGray
+            ProjectStatus.IN_PROGRESS -> NavyBlue
+            ProjectStatus.ON_HOLD -> YellowOchre
+            ProjectStatus.COMPLETED -> PineGreen
+        }
+    } else {
+        when (status) {
+            ProjectStatus.NOT_STARTED -> LightGray
+            ProjectStatus.IN_PROGRESS -> SkyBlue
+            ProjectStatus.ON_HOLD -> PaleYellow
+            ProjectStatus.COMPLETED -> EmeraldGreen
+        }
+    }
 }
