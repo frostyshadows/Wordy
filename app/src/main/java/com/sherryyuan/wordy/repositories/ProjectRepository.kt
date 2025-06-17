@@ -19,7 +19,7 @@ class ProjectRepository @Inject constructor(
         return projectDao.getAll()
     }
 
-    fun getProjectsById(id: Long): Flow<Project> {
+    fun getProjectsById(id: Long): Flow<Project?> {
         return projectDao.getProjectById(id)
     }
 
@@ -38,6 +38,10 @@ class ProjectRepository @Inject constructor(
         status: ProjectStatus? = null,
     ) {
         projectDao.updateProject(id, title, description, goal, status)
+    }
+
+    suspend fun deleteProject(id: Long) {
+        projectDao.deleteProject(id)
     }
 
     fun getSelectedProject(): Flow<Project?> {

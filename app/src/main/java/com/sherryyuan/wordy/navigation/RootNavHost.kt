@@ -128,11 +128,16 @@ fun RootNavHost(
                     onNavigateToProjectDetail = {
                         navController.navigate(WordyNavDestination.ProjectDetail(it))
                     },
-                    topBarAnimatedVisibilityScope = this@composable
+                    topBarAnimatedVisibilityScope = this@composable,
                 )
             }
             composable<WordyNavDestination.ProjectDetail> {
-                ProjectDetailScreen(topBarAnimatedVisibilityScope = this@composable)
+                ProjectDetailScreen(
+                    onNavigateToProjectsList = {
+                        navController.navigate(WordyNavDestination.ProjectsList)
+                    },
+                    topBarAnimatedVisibilityScope = this@composable,
+                )
             }
         }
     }
