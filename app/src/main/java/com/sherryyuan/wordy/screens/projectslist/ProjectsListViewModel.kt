@@ -1,7 +1,6 @@
 package com.sherryyuan.wordy.screens.projectslist
 
 import androidx.annotation.StringRes
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sherryyuan.wordy.R
@@ -93,12 +92,4 @@ fun getStatusLabelRes(status: ProjectStatus): Int =
         ProjectStatus.IN_PROGRESS -> R.string.in_progress_status_label
         ProjectStatus.ON_HOLD -> R.string.on_hold_status_label
         ProjectStatus.COMPLETED -> R.string.completed_status_label
-    }
-
-fun getStatusColor(status: ProjectStatus): Color =
-    when (status) {
-        ProjectStatus.NOT_STARTED -> Color.Gray
-        ProjectStatus.IN_PROGRESS -> Color.Blue
-        ProjectStatus.ON_HOLD -> Color.Yellow
-        ProjectStatus.COMPLETED -> Color.Green
     }
