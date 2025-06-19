@@ -17,7 +17,7 @@ interface ProjectDao {
     fun getAll(): Flow<List<Project>>
 
     @Query("SELECT * FROM Project WHERE id = :id")
-    fun getProjectById(id: Long): Flow<Project>
+    fun getProjectById(id: Long): Flow<Project?>
 
     @Query("SELECT EXISTS(SELECT * FROM Project WHERE id = :defaultId)")
     suspend fun hasDefaultProject(defaultId: Long = DEFAULT_JUST_WRITE_PROJECT_ID): Boolean
@@ -47,6 +47,6 @@ interface ProjectDao {
         status: ProjectStatus? = null,
     )
 
-    @Query("DELETE FROM Project WHERE id = :defaultId")
-    suspend fun deleteDefaultProject(defaultId: Long = DEFAULT_JUST_WRITE_PROJECT_ID)
+    @Query("DELETE FROM Project WHERE id = :projectId")
+    suspend fun deleteProject(projectId: Long)
 }

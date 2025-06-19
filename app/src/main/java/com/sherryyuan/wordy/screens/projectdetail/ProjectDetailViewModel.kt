@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -59,6 +60,25 @@ class ProjectDetailViewModel @Inject constructor(
         }
     }
 
+    fun deleteProject() {
+        projectId?.let { id ->
+            viewModelScope.launch(Dispatchers.IO) {
+                val isSelectedProjectDeleted =
+                    projectRepository.getSelectedProject().first()?.id == id
+                projectRepository.deleteProject(id)
+                if (isSelectedProjectDeleted) {
+                    // Select another project as active
+                    val oldestActiveProjectId = projectRepository
+                        .getProjects()
+                        .first()
+                        .filter { it.status != ProjectStatus.COMPLETED }
+                        .minOf { it.id }
+                    projectRepository.updateSelectedProject(oldestActiveProjectId)
+                }
+            }
+        }
+    }
+
     private fun createProjectDetailState(): StateFlow<ProjectDetailViewState> {
         projectId ?: return MutableStateFlow(ProjectDetailViewState.Loading)
         return combine(
@@ -66,13 +86,17 @@ class ProjectDetailViewModel @Inject constructor(
             entryRepository.getEntries(),
             isEditing,
         ) { project, entries, isEditing ->
-            val wordCount = entries
-                .filter { it.projectId == project.id }
-                .sumOf { it.wordCount }
-            ProjectDetailViewState.Loaded(
-                projectWithWordCount = Pair(project, wordCount),
-                isEditing = isEditing,
-            )
+            if (project == null) {
+                ProjectDetailViewState.Loading
+            } else {
+                val wordCount = entries
+                    .filter { it.projectId == project.id }
+                    .sumOf { it.wordCount }
+                ProjectDetailViewState.Loaded(
+                    projectWithWordCount = Pair(project, wordCount),
+                    isEditing = isEditing,
+                )
+            }
         }.stateIn(
             viewModelScope, SharingStarted.Eagerly,
             ProjectDetailViewState.Loading,
