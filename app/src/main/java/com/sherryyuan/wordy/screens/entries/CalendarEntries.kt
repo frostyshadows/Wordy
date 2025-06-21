@@ -84,6 +84,7 @@ fun CalendarEntries(
         } else null,
     )
     HorizontalCalendar(
+        modifier = Modifier.padding(horizontal = 8.dp),
         state = calendarState,
         monthHeader = {
             MonthHeader(daysOfWeek = daysOfWeek)
@@ -138,6 +139,7 @@ private fun CalendarHeader(
             modifier = Modifier.weight(1f),
             text = monthYearText,
             textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.titleLarge,
         )
         goToNext?.let {
             IconButton(onClick = it) {
