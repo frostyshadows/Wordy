@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 
 private val LightColorScheme = lightColorScheme(
     primary = RibbonRed,
-    secondary = WarmGray,
+    secondary = Mocha,
     tertiary = LightGray,
     background = PaperWhite,
     surface = CreamyWhite,
@@ -25,7 +25,7 @@ private val DarkColorScheme = darkColorScheme(
     background = DarkGray,
     surface = DarkerGray,
     primaryContainer = DarkerGray,
-    secondaryContainer = Gold,
+    secondaryContainer = Latte,
     surfaceContainer = DarkerGray,
     surfaceContainerHighest = DarkerGray,
 )

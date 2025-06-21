@@ -1,9 +1,12 @@
 package com.sherryyuan.wordy.screens.entries
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -11,6 +14,7 @@ import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -23,9 +27,11 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.sherryyuan.wordy.R
 import com.sherryyuan.wordy.ui.HorizontalSpacer
+import com.sherryyuan.wordy.ui.VerticalSpacer
 import com.sherryyuan.wordy.ui.theme.WordyTheme
 import java.time.YearMonth
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ListEntries(
     entriesState: EntriesViewState.ListEntries,
@@ -37,7 +43,10 @@ fun ListEntries(
     }
 
     if (entriesState.isShowCurrentOnlyToggleVisible) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            modifier = Modifier.padding(horizontal = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             Checkbox(
                 checked = entriesState.showCurrentProjectOnly,
                 onCheckedChange = { onShowCurrentProjectClick() }
@@ -46,20 +55,24 @@ fun ListEntries(
         }
     }
     LazyColumn(
-        contentPadding = PaddingValues(bottom = contentPaddingBottom)
+        contentPadding = PaddingValues(start = 24.dp, end = 24.dp, bottom = contentPaddingBottom)
     ) {
         entriesState.monthlyEntries.forEachIndexed { i, entries ->
             val isCollapsed = monthsCollapsedState[i]
-            item(entries.monthHeaderText) {
+            stickyHeader {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
+                        .background(color = MaterialTheme.colorScheme.background)
+                        .padding(bottom = 4.dp)
                         .fillMaxWidth()
                         .clickable { monthsCollapsedState[i] = !isCollapsed }
+                        .animateItem()
                 ) {
                     Text(
                         modifier = Modifier.weight(1f),
                         text = entries.monthHeaderText,
+                        style = MaterialTheme.typography.titleLarge,
                     )
                     Icon(
                         if (isCollapsed) Icons.Outlined.KeyboardArrowUp else Icons.Outlined.KeyboardArrowDown,
@@ -68,17 +81,28 @@ fun ListEntries(
                 }
             }
             if (!isCollapsed) {
-                items(entries.dailyEntries) {
-                    DailyEntry(it)
+                items(entries.dailyEntries, key = { it.dateText }) {
+                    DailyEntry(
+                        entry = it,
+                        modifier = Modifier
+                            .padding(vertical = 4.dp)
+                            .animateItem(),
+                    )
                 }
+            }
+            item {
+                VerticalSpacer(heightDp = 8)
             }
         }
     }
 }
 
 @Composable
-private fun DailyEntry(entry: EntriesViewState.DailyEntry) {
-    Row {
+private fun DailyEntry(
+    entry: EntriesViewState.DailyEntry,
+    modifier: Modifier = Modifier,
+) {
+    Row(modifier) {
         Text(entry.dateText)
         HorizontalSpacer()
         Text(stringResource(R.string.words_message, entry.wordCount))

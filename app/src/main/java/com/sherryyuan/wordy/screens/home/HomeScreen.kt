@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -30,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -54,8 +56,7 @@ fun HomeScreen(
                 LoadedHomeScreen(
                     modifier = Modifier
                         .fillMaxSize()
-                        .topAndSideContentPadding(contentPadding)
-                        .padding(24.dp),
+                        .topAndSideContentPadding(contentPadding),
                     viewState = state,
                     onWordCountInputChange = { viewModel.setWordCount(it) },
                     onWordCountInputSubmit = {
@@ -81,25 +82,30 @@ private fun LoadedHomeScreen(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text(viewState.projectTitle)
         VerticalSpacer()
+        Column(
+            modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
 
-        WordCountInput(viewState, onWordCountInputChange, onWordCountInputSubmit)
-        VerticalSpacer(heightDp = 12)
+            WordCountInput(viewState, onWordCountInputChange, onWordCountInputSubmit)
+            VerticalSpacer(heightDp = 12)
 
-        Row {
-            AnimatedCounter(viewState.wordsToday)
-            Text(stringResource(R.string.words_today_message))
+            Row {
+                AnimatedCounter(viewState.wordsToday)
+                Text(stringResource(R.string.words_today_message))
+            }
+            VerticalSpacer(heightDp = 4)
+
+            LinearProgressIndicator(
+                progress = { viewState.wordsToday.toFloat() / viewState.adjustedWordCountGoal },
+                trackColor = MaterialTheme.colorScheme.tertiary,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(8.dp),
+                drawStopIndicator = {},
+            )
         }
-        VerticalSpacer(heightDp = 4)
-
-        LinearProgressIndicator(
-            progress = { viewState.wordsToday.toFloat() / viewState.adjustedWordCountGoal },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(8.dp),
-            drawStopIndicator = {},
-        )
         VerticalSpacer(heightDp = 4)
         val remainingWordCount = viewState.adjustedWordCountGoal - viewState.wordsToday
         if (remainingWordCount > 0) {
@@ -115,20 +121,23 @@ private fun LoadedHomeScreen(
         }
 
         if (viewState.chartWordCounts.isNotEmpty()) {
-            VerticalSpacer()
+            VerticalSpacer(heightDp = 24)
             when (viewState.selectedDisplayedChartRange) {
                 HomeViewState.DisplayedChartRange.PROJECT_WITH_DEADLINE -> CumulativeWordCountChart(
-                    viewState.chartWordCounts,
-                    viewState.initialWordCountGoal,
+                    modifier = Modifier.padding(horizontal = 8.dp),
+                    wordCounts = viewState.chartWordCounts,
+                    wordCountGoal = viewState.initialWordCountGoal,
                 )
 
                 else -> {
                     DailyWordCountChart(
-                        viewState.chartWordCounts,
-                        viewState.initialWordCountGoal,
+                        modifier = Modifier.padding(horizontal = 8.dp),
+                        wordCounts = viewState.chartWordCounts,
+                        wordCountGoal = viewState.initialWordCountGoal,
                     )
-                    VerticalSpacer()
+                    VerticalSpacer(heightDp = 12)
                     ChartRangePicker(
+                        modifier = Modifier.padding(horizontal = 24.dp),
                         selectedChartRange = viewState.selectedDisplayedChartRange,
                         onChartRangeSelected = onChartRangeSelected,
                     )

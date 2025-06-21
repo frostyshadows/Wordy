@@ -3,7 +3,6 @@ package com.sherryyuan.wordy.screens.projectslist
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -81,6 +80,8 @@ fun SharedTransitionScope.ProjectsListScreen(
                             .fillMaxWidth()
                             .padding(horizontal = 24.dp, vertical = 8.dp),
                         text = stringResource(section.titleRes),
+                        style = MaterialTheme.typography.titleLarge,
+                        textAlign = TextAlign.Center,
                     )
                 }
                 items(
@@ -138,9 +139,8 @@ private fun ProjectCard(
         .withZone(ZoneId.systemDefault())
     Card(
         modifier = Modifier
-            .padding(vertical = 4.dp)
+            .padding(horizontal = 12.dp, vertical = 4.dp)
             .clickable { onClick() },
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
     ) {
         val (project, wordCount) = projectWithWordCount
         Row(

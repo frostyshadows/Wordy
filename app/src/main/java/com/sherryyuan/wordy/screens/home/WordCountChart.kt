@@ -4,6 +4,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
@@ -39,6 +40,7 @@ private const val X_AXIS_PLACEHOLDER = "..."
 fun DailyWordCountChart(
     wordCounts: Map<LocalDate, Int>,
     wordCountGoal: Int,
+    modifier: Modifier = Modifier,
 ) {
     val modelProducer = remember { CartesianChartModelProducer() }
     val xAxisDates = wordCounts.getXAxisDates()
@@ -50,6 +52,7 @@ fun DailyWordCountChart(
 
     ProvideVicoTheme(rememberM3VicoTheme()) {
         CartesianChartHost(
+            modifier = modifier,
             chart = rememberCartesianChart(
                 rememberColumnCartesianLayer(
                     rememberWordCountColumnProvider(wordCountGoal, isCumulativeGoal = false)
@@ -64,7 +67,9 @@ fun DailyWordCountChart(
                 decorations = listOf(
                     HorizontalLine(
                         y = { wordCountGoal.toDouble() },
-                        line = rememberLineComponent(),
+                        line = rememberLineComponent(
+                            fill = Fill(MaterialTheme.colorScheme.primary.toArgb())
+                        ),
                     )
                 ),
             ),
@@ -79,6 +84,7 @@ fun DailyWordCountChart(
 fun CumulativeWordCountChart(
     wordCounts: Map<LocalDate, Int>,
     wordCountGoal: Int,
+    modifier: Modifier = Modifier,
 ) {
     val modelProducer = remember { CartesianChartModelProducer() }
     val xAxisDates = wordCounts.getXAxisDates()
@@ -94,6 +100,7 @@ fun CumulativeWordCountChart(
 
     ProvideVicoTheme(rememberM3VicoTheme()) {
         CartesianChartHost(
+            modifier = modifier,
             chart = rememberCartesianChart(
                 rememberColumnCartesianLayer(
                     rememberWordCountColumnProvider(wordCountGoal, isCumulativeGoal = true)
@@ -131,7 +138,7 @@ private fun rememberWordCountColumnProvider(
     isCumulativeGoal: Boolean,
 ): ColumnCartesianLayer.ColumnProvider {
     val goalMetColor = MaterialTheme.colorScheme.primary
-    val defaultColor = MaterialTheme.colorScheme.secondaryContainer
+    val defaultColor = MaterialTheme.colorScheme.tertiary
     return remember(wordCountGoal) {
         object : ColumnCartesianLayer.ColumnProvider {
             override fun getColumn(
